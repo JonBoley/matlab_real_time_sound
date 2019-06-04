@@ -23,6 +23,8 @@ classdef rt_spectrum < rt_visualizer & no_show
             addParameter(pars,'NumberFFTbins','256');
             addParameter(pars,'Overlap',128);
             addParameter(pars,'WindowFunction','hann');
+            addParameter(pars,'zoom',1);
+            
             
             parse(pars,varargin{:});
             list={'16';'32';'64';'128';'256';'512';'1024';'2048'};
@@ -31,6 +33,8 @@ classdef rt_spectrum < rt_visualizer & no_show
             add(obj.p,param_int('Overlap',pars.Results.Overlap));
             add(obj.p,param_popupmenu('NumberFFTbins',pars.Results.NumberFFTbins,'list',list));
             add(obj.p,param_popupmenu('WindowFunction',pars.Results.WindowFunction,'list',wins));
+            add(obj.p,param_float_slider('zoom',pars.Results.zoom,'minvalue',0,'maxvalue',10));
+            
         end
         
         function post_init(obj) % called the second times around
@@ -72,7 +76,7 @@ classdef rt_spectrum < rt_visualizer & no_show
             ylabel(ax,'frequency (kHz)')
             obj.stim_buffer=circbuf1(round(obj.parent.SampleRate*obj.parent.PlotWidth)); %zeros(parent.Fs*obj.plotwidth,1);
             title(ax,obj.fullname);
-                        
+            
             colormap(ax,parula);
             set_changed_status(obj.p,0);
         end
@@ -83,13 +87,15 @@ classdef rt_spectrum < rt_visualizer & no_show
             ax=obj.viz_axes;
             
             if has_changed(obj.p)
-                post_init(obj);
-                set_changed_status(obj.p,0);
+                if ~has_changed(getparameter(obj.p,'zoom')) % no need to restart - tunable
+                    post_init(obj);
+                    set_changed_status(obj.p,0);
+                end
             end
             fs=obj.parent.SampleRate;
             nfft=str2double(getvalue(obj.p,'NumberFFTbins'));
             len=getvalue(obj.p,'WindowLengthbins');
-            overlap=getvalue(obj.p,'Overlap');            
+            overlap=getvalue(obj.p,'Overlap');
             
             sigbuf=obj.stim_buffer;
             specbuf=obj.spec_buffer;
@@ -100,24 +106,26 @@ classdef rt_spectrum < rt_visualizer & no_show
             s=spectrogram(sigclip,obj.window,overlap,nfft,fs);
             
             %             s=pwelch(sig,obj.window,0,obj.nfft,obj.parent.Fs);
-%             s=1-abs(log(s));
+            %             s=1-abs(log(s));
             s=abs(s);
-%             s=64-s;
-            s=s*64/34;  % max value by try and error
+            %             s=64-s;
+            g=getvalue(obj.p,'zoom');
+            
+            s=s*64/34*g;  % max value by try and error
             specbuf=push(specbuf,s');
             dd=get(specbuf)';
             image(dd,'parent',ax);
-%             figure(1)
-%             plot(s);
-%             if max(s)>obj.maxamp
-%                 obj.maxamp=max(s)
-%             end
-%                             set(gca,'ylim',[0 obj.maxamp]);
-
-%   Copyright 2019 Stefan Bleeck, University of Southampton
-%             colormap(ax,parula);
-%             colormap(ax,gray);
-
-        end       
+            %             figure(1)
+            %             plot(s);
+            %             if max(s)>obj.maxamp
+            %                 obj.maxamp=max(s)
+            %             end
+            %                             set(gca,'ylim',[0 obj.maxamp]);
+            
+            %   Copyright 2019 Stefan Bleeck, University of Southampton
+            %             colormap(ax,parula);
+            %             colormap(ax,gray);
+            
+        end
     end
 end

@@ -61,8 +61,8 @@ classdef rt_dBSPL < rt_measurer
                     fs{i}=sprintf('%2.2f',obj.CenterFrequency(i)/1000);
                 end
                 fs{i+1}='total(linear)';
-                fs{i+1}='total(dBA)';
-                set(measax,'xtick',1:length(obj.octbandfilt)+1,'xticklabel',fs)
+                fs{i+2}='total(dBA)';
+                set(measax,'xtick',1:length(obj.octbandfilt)+2,'xticklabel',fs)
             end
         end
         

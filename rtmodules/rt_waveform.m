@@ -5,7 +5,7 @@ classdef rt_waveform < rt_visualizer
     
     properties
         stim_buffer;
-        %         xzoomout=16;
+        x_vals
     end
     
     methods
@@ -31,23 +31,30 @@ classdef rt_waveform < rt_visualizer
                 xlabel(ax,'time (sec)')
                 ylabel(ax,'amplitude (Pa)')
             end
+            obj.x_vals=0:1/obj.parent.SampleRate:obj.parent.PlotWidth-1/obj.parent.SampleRate;
+            pmax=obj.P0*power(10,obj.parent.max_file_level/20); % calibrate this to the assumed maximum amplitude of a wav file
+            g=getvalue(obj.p,'zoom');
+            ppmax=pmax/g*10;
+            set(ax,'xlim',[min(obj.x_vals) max(obj.x_vals)],'ylim',[-ppmax ppmax]);
+                        
         end
         
         function plot(obj,sig)
             buf=obj.stim_buffer;
-            global_time=obj.parent.global_time;
+%             global_time=obj.parent.global_time;
             push(buf,sig);
             y=get(buf);
-            allx=linspace(global_time,global_time+obj.parent.PlotWidth,length(y));
+%             allx=linspace(global_time,global_time+obj.parent.PlotWidth,length(y));
             pmax=obj.P0*power(10,obj.parent.max_file_level/20); % calibrate this to the assumed maximum amplitude of a wav file
             g=getvalue(obj.p,'zoom');
             ppmax=pmax/g*10;
             
             ax=obj.viz_axes;
             if ~isempty(ax)
-                plot(ax,allx,y,'k');
+                plot(ax,obj.x_vals,y,'k');
+                set(ax,'ylim',[-ppmax ppmax]);
+
             end
-            set(ax,'xlim',[min(allx) max(allx)],'ylim',[-ppmax ppmax]);
         end
     end
 end
