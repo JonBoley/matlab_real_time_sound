@@ -1,0 +1,66 @@
+% input module, can return signals
+classdef rt_input_file < rt_input
+    properties
+        fileFs; % the fs of the input, can be different from
+        file_frame_length; % the frame length for the file, will be different if sr isn't the same
+        file_length;
+        recorder;
+    end
+    
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+    methods
+        function obj=rt_input_file(parent,varargin) %% called the very first time around
+            obj@rt_input(parent,varargin{:});
+            obj.fullname='load from file';
+            pre_init(obj);  % add the parameter gui
+
+            pars = inputParser;
+            pars.KeepUnmatched=true;
+            addParameter(pars,'filename','emergency.wav');
+            addParameter(pars,'foldername','.');
+            parse(pars,varargin{:});
+            add(obj.p,param_filename('filename',pars.Results.filename));
+            add(obj.p,param_foldername('foldername',pars.Results.foldername));
+            obj.input_source_type='file';
+            obj.show=1;  % show me as selectable to the user
+        end
+        
+        function post_init(obj) % called the second times around
+            post_init@rt_input(obj);
+            
+            close(obj);
+            od=cd(getvalue(obj.p,'foldername'));
+            filename=getvalue(obj.p,'filename');
+            
+            if ~isfile(filename)
+                error('rt_input_file: file: %s doesn''t exist in folder %s\n',filename,pwd);
+%                 filename='emergency.wav';
+            end
+            
+            ai=audioinfo(obj.filename);  
+            obj.file_length=ai.Duration;
+            obj.fileFs=ai.SampleRate;
+            obj.file_frame_length=calc_frame_length(obj,obj.fileFs,obj.parent.SampleRate,obj.parent.FrameLength);
+            obj.recorder= dsp.AudioFileReader(filename,'PlayCount',inf,'SamplesPerFrame',obj.file_frame_length);
+            cd(od);
+        end
+        
+        function duration=get_file_duration(obj)
+            duration = obj.file_length;
+        end
+        
+        function sig=read_next(obj)
+            sig = obj.recorder();
+            sig=resample(sig,obj.parent.SampleRate,obj.fileFs); % ressample to wanted SR
+            sig=input_calibrate(obj,sig);
+        end
+        
+        
+        function close(obj)
+            if ~isempty(obj.recorder) % first release the old one
+                release(obj.recorder);
+            end
+        end
+        
+    end
+end
