@@ -15,7 +15,6 @@ classdef rt_input < rt_module
             obj.fullname='generic input';
             obj.is_input=1;
             obj.input_source_type='not specified';
-%             obj.show=0; % don't show me to the user
         end
        
         function duration=get_file_duration(obj)

@@ -40,12 +40,6 @@ classdef rtprocess < handle
             % default version only has one module
             close(obj.basic_module);
         end
-        
-%         function  ss=get_as_script_string(obj,oname)
-%             % returns the obj in a form that it can be initialized in a
-%             % script. including all parameters in the right form
-%             ss=get_as_script_string(obj.basic_module,oname);
-%         end
-        
+              
     end
 end

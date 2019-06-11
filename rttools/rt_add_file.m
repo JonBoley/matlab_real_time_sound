@@ -28,7 +28,6 @@ classdef rt_add_file < rt_input
             add(obj.p,param_foldername('foldername',pars.Results.foldername));
             add(obj.p,param_float_slider('attenuation',pars.Results.attenuation,'minvalue',-20,'maxvalue',30,'unittype',unit_mod,'unit','dB'));
             obj.input_source_type='file';
-%             obj.parent.add_noise_module=obj; % tell my parent that we do have a noise adding module now
 
         end
         
