@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_vad < rt_waveform
     
@@ -27,6 +30,8 @@ classdef rt_vad < rt_waveform
             add(obj.p,param_number('SidelobeAttenuation',pars.Results.SidelobeAttenuation));
             add(obj.p,param_number('SilenceToSpeechProbability',pars.Results.SilenceToSpeechProbability));
             add(obj.p,param_number('SpeechToSilenceProbability',pars.Results.SpeechToSilenceProbability));
+            
+            obj.descriptor='Voice activity detection is implementation of Matlab function ''''voiceActivityDetector''''. More information: https://uk.mathworks.com/help/audio/ref/voiceactivitydetector-system-object.html';
            
         end
         
@@ -73,8 +78,8 @@ classdef rt_vad < rt_waveform
             hold(ax,'on')
             
             
-            global_time=obj.parent.global_time;
-            Fs=obj.parent.SampleRate;
+%             global_time=obj.parent.global_time;
+%             Fs=obj.parent.SampleRate;
             
             [probability,~] = obj.myVAD(sig);
             push(buf,ones(size(sig))*probability);
@@ -91,8 +96,9 @@ classdef rt_vad < rt_waveform
             %             else
             %                 obj.vadbuffer=push(obj.vadbuffer,zeros(size(sig)));
             %             end
-            allx=global_time:1/Fs:global_time+obj.parent.PlotWidth-1/Fs;
-            plot(ax,allx,get(buf),'r');
+%             allx=global_time:1/Fs:global_time+obj.parent.PlotWidth-1/Fs;
+
+            plot(ax,obj.x_vals,get(buf),'r');
             
         end
     end

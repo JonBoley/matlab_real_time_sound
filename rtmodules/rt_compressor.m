@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 
@@ -9,7 +12,7 @@ classdef rt_compressor < rt_manipulator
     methods
         
         function obj=rt_compressor(parent,varargin)
-           obj@rt_manipulator(parent,varargin);  % superclass contructor
+            obj@rt_manipulator(parent,varargin);  % superclass contructor
             obj.fullname='Compression'; % full name identifies it later on the screen
             pre_init(obj);  % add the parameter gui
             
@@ -20,14 +23,31 @@ classdef rt_compressor < rt_manipulator
             addParameter(pars,'KneeWidth',10);
             addParameter(pars,'AttackTime',0.05);
             addParameter(pars,'ReleaseTime',0.2);
-
-            parse(pars,varargin{:});           
-
+            
+            parse(pars,varargin{:});
+            
             add(obj.p,param_float_slider('Threshold',pars.Results.Threshold,'minvalue',-50, 'maxvalue',0));
             add(obj.p,param_float_slider('Ratio',pars.Results.Ratio,'minvalue',1, 'maxvalue',20));
             add(obj.p,param_float_slider('KneeWidth',pars.Results.KneeWidth,'minvalue',0, 'maxvalue',20));
             add(obj.p,param_float_slider('AttackTime',pars.Results.AttackTime,'minvalue',0, 'maxvalue',4,'unittype',unit_time,'unit','sec'));
             add(obj.p,param_float_slider('ReleaseTime',pars.Results.ReleaseTime,'minvalue',0, 'maxvalue',4,'unittype',unit_time,'unit','sec'));
+            
+
+            
+            s='compressor: dynamic range compresses the amplitude envelope of the signal. ';
+            s=[s,'Implementation is wrapper of the matlab ''compressor'' funciton '];
+            s=[s,'described here: '];
+            s=[s,'https://uk.mathworks.com/help/audio/ref/compressor-system-object.html'];
+            s=[s,'The compressor System object? performs dynamic range compression independently '];
+            s=[s,'across each input channel. Dynamic range compression attenuates the volume of loud '];
+            s=[s,'sounds that cross a given threshold. It uses specified attack and release '];
+            s=[s,'times to achieve a smooth applied gain curve. Properties of the compressor System '];
+            s=[s, 'object specify the type of dynamic range compression.'];
+            obj.descriptor=s;
+            
+            
+            
+            
         end
         
         function post_init(obj) % called the second times around
@@ -40,13 +60,13 @@ classdef rt_compressor < rt_manipulator
                 'MakeUpGainMode','auto',...
                 'SampleRate',obj.parent.SampleRate);
             
-
+            
             set_changed_status(obj.p,0);
             
-                        %% if overlap and add, there exist another module that needs to be updated too!!
+            %% if overlap and add, there exist another module that needs to be updated too!!
             % make sure that the other module doesn't get forgotton:
-             sync_initializations(obj); % in order to catch potential other modules that need to be updated!
-
+            sync_initializations(obj); % in order to catch potential other modules that need to be updated!
+            
         end
         
         function sr=apply(obj,s)
@@ -67,12 +87,12 @@ classdef rt_compressor < rt_manipulator
             sr = obj.mycompress(s);
             sr=sr.*pmax;
             
-%             figure(3)
-%             hold on
-%             plot(s)
-%             plot(sr,'g')
+            %             figure(3)
+            %             hold on
+            %             plot(s)
+            %             plot(sr,'g')
             
-%   Copyright 2019 Stefan Bleeck, University of Southampton
+            %   Copyright 2019 Stefan Bleeck, University of Southampton
         end
         
         function change_parameter(obj)

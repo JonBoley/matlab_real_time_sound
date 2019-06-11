@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef param_number < parameter
     properties (SetAccess = protected)
@@ -18,7 +21,7 @@ classdef param_number < parameter
         
         function setvalue(param,v)  % set the value of this param
             param.value=v;
-            if param.hand(1)>0
+            if param.hand(1)>0 && ishandle(param.hand(2))
                 set(param.hand(2),'Value',string(param.value));
             end
             param.is_changed=1;

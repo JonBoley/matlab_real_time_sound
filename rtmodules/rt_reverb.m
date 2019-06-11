@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 
@@ -25,6 +28,10 @@ classdef rt_reverb < rt_manipulator
             add(obj.p,param_float_slider('DecayFactor',pars.Results.DecayFactor,'minvalue',0, 'maxvalue',1));
             add(obj.p,param_float_slider('WetDryMix',pars.Results.WetDryMix,'minvalue',0, 'maxvalue',1));            
            
+                        s='Reverb simulates the reverberatio in a room';
+            s=[s,'implementation from the matlab function ''reverberator'' described here:'];
+            s=[s, ' https://uk.mathworks.com/help/audio/ref/reverberator-system-object.html'];
+            obj.descriptor=s;
         end
         
         function post_init(obj) % called the second times around

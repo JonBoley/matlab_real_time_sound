@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 classdef rt_graficequal < rt_manipulator
@@ -24,7 +27,23 @@ classdef rt_graficequal < rt_manipulator
             add(obj.p,param_popupmenu('Bandwidth',pars.Results.Bandwidth,'list',bands));
             add(obj.p,param_popupmenu('Structure',pars.Results.Structure,'list',struc));
             set_listener(obj.p,obj);
-            add(obj.p,param_button('change gains','button_text','open gui','button_callback_function','parameterTuner(param.parent.listener.equalizer);'));            
+            add(obj.p,param_button('change gains','button_text','open gui','button_callback_function','display_equalizer(param.button_target);','button_target',obj));
+            
+            s='Graphic equalizer - standards-based graphic equalizer';
+            s=[s ' implements the matlab function graphicEQ'];
+            s=[s ' https://uk.mathworks.com/help/audio/ref/graphiceq-system-object.html'];
+            s=[s ' The graphicEQ System object? implements a graphic equalizer that can tune the gain on'];
+            s=[s '  individual octave or fractional octave bands. The object filters the data independently'];
+            s=[s 'across each input channel over time using the filter specifications. '];
+            s=[s 'Center and edge frequencies of the bands are based on the ANSI S1.11-2004 standard.'];
+            
+            obj.descriptor=s;
+        end
+        
+        function display_equalizer(obj)
+           if ~isempty(obj.equalizer)
+               parameterTuner(obj.equalizer);
+           end
         end
         
         function post_init(obj) % called the second times around
@@ -36,11 +55,14 @@ classdef rt_graficequal < rt_manipulator
                 'Structure',getvalue(obj.p,'Structure'),...
                 'Bandwidth',getvalue(obj.p,'Bandwidth'));
             
+            p=getparameter(obj.p,'change gains');
+            p.button_target.equalizer=obj.equalizer;
             
-                        %% if overlap and add, there exist another module that needs to be updated too!!
+            
+            %% if overlap and add, there exist another module that needs to be updated too!!
             % make sure that the other module doesn't get forgotton:
-             sync_initializations(obj); % in order to catch potential other modules that need to be updated!
-
+            sync_initializations(obj); % in order to catch potential other modules that need to be updated!
+            
         end
         
         function sr=apply(obj,s)
@@ -51,7 +73,7 @@ classdef rt_graficequal < rt_manipulator
             sr =obj.equalizer(s);
         end
         
-        function close(obj) 
+        function close(obj)
             if ~isempty(obj.equalizer)
                 release(obj.equalizer)
             end

@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 
@@ -29,9 +32,20 @@ classdef rt_ibm < rt_manipulator
             add(obj.p,param_number('NumberChannel',pars.Results.NumberChannel));
             add(obj.p,param_float_slider('SpeechThreshold',pars.Results.SpeechThreshold,'minvalue',-20, 'maxvalue',50));
             add(obj.p,param_float_slider('IdealMaskReduction',pars.Results.IdealMaskReduction,'minvalue',-100, 'maxvalue',0));
+           
+            obj.requires_noise=1;  % this module requires that noise is switched on
+            obj.requires_overlap_add=1;  % this module requires that overlap and add is switched on
+             
+            s='IBM: ideal binary mask reduces the noise in a signal with the knowledge of the clean signal';
+            s=[s, 'the parameters allow to change the threshold of reduction and the amount of noise reduction'];
+            obj.descriptor=s;
+           
         end
         
         function post_init(obj) % called the second times around
+            post_init@rt_manipulator(obj);
+            
+            
             method=getvalue(obj.p,'Method');
             switch method
                 case 'Gammatone fb based'
@@ -50,10 +64,10 @@ classdef rt_ibm < rt_manipulator
                 case 'Spectral based'
             end
             
-                        %% if overlap and add, there exist another module that needs to be updated too!!
+            %% if overlap and add, there exist another module that needs to be updated too!!
             % make sure that the other module doesn't get forgotton:
-             sync_initializations(obj); % in order to catch potential other modules that need to be updated!
-
+            sync_initializations(obj); % in order to catch potential other modules that need to be updated!
+            
             
         end
         
@@ -99,7 +113,7 @@ classdef rt_ibm < rt_manipulator
                     enhanced=sum(bmm_resynth')';  % sum them all up as simplest method of resynthesis
                     
                 case 'Spectral based'
-                    nfft=obj.parent.frame_length;% FFT analysis length
+                    nfft=obj.parent.FrameLength;% FFT analysis length
                     
                     X = fft(noisy, nfft);
                     S = fft(clean, nfft);

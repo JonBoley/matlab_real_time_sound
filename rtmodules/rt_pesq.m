@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_pesq < rt_measurer
     properties
@@ -21,14 +24,14 @@ classdef rt_pesq < rt_measurer
             add(obj.p,param_slider('gain',pars.Results.gain,'minvalue',-20, 'maxvalue',20));
             add(obj.p,param_float('integrationPeriod',pars.Results.integrationPeriod));
             
-            %
-            %             if nargin <2
-            %                 name='PESQ (speech quality)';
-            %             end
-            %             obj@measurer(parent,name);  %% initialize superclass first
-            %
-            %             obj.parent=parent;
-            %
+            s='Perceptual estimation of speech qualtiy (PESQ) measure based on the ITU standard P.862 [1].';
+            s=[s, 'and requires the clean signal'];
+            s=[s, 'Reference'];
+            s=[s, '[1] ITU (2000). Perceptual evaluation of speech quality (PESQ), and objective method for end-to-end speech quality assessment of '];
+            s=[s, 'narrowband telephone networks and speech codecs. ITU-T Recommendation P. 862   '];
+            s=[s, 'Authors: Yi Hu and Philipos C. Loizou '];
+            obj.descriptor=s;
+            
         end
         
         function post_init(obj)

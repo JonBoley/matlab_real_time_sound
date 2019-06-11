@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 
@@ -31,8 +34,13 @@ classdef rt_specsub < rt_manipulator
             add(obj.p,param_float_slider('FLOOR',pars.Results.FLOOR,'minvalue',0, 'maxvalue',0.1));
             add(obj.p,param_float_slider('G',pars.Results.G,'minvalue',0, 'maxvalue',1));
             
+            s='Spectral subtraction: The implementation is from the book ''Speech enhancement''';
+            s=[s, ' by Phillipos Loizou, adapted for real time run '];
+            s=[s, '(different calculation of initial conditions)'];
+            s=[s, ' More information: http://practicalcryptography.com/miscellaneous/machine-learning/tutorial-spectral-subraction/'];
+            obj.descriptor=s;
             
-            obj.descriptor='Spectral subtraction: The implementation is from the book ''Speech enhancement'' by Phillipos Loizou, adapted for real time run (different calculation of initial conditions)\n More information: http://practicalcryptography.com/miscellaneous/machine-learning/tutorial-spectral-subraction/';
+
             
         end
         

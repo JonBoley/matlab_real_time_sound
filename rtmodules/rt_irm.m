@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 % ideal ratio mask
@@ -8,12 +11,11 @@ classdef rt_irm < rt_manipulator
         ibm_buffer;
     end
     
-%   Copyright 2019 Stefan Bleeck, University of Southampton
     methods
         
         function obj=rt_irm(parent,varargin)
             obj@rt_manipulator(parent,varargin{:});
-            obj.fullname='Ideal binary mask';
+            obj.fullname='Ideal ratio mask';
             pre_init(obj);  % add the parameter gui
             
             pars = inputParser;
@@ -21,7 +23,7 @@ classdef rt_irm < rt_manipulator
             met={'Spectral based';'Gammatone fb based'};
             addParameter(pars,'Method',met{1});
             addParameter(pars,'NumberChannel',50);
-            addParameter(pars,'SpeechThreshold',-15);
+            addParameter(pars,'SpeechThreshold',15);
             addParameter(pars,'IdealMaskReduction',-20);
             
             parse(pars,varargin{:});
@@ -29,6 +31,14 @@ classdef rt_irm < rt_manipulator
             add(obj.p,param_number('NumberChannel',pars.Results.NumberChannel));
             add(obj.p,param_float_slider('SpeechThreshold',pars.Results.SpeechThreshold,'minvalue',0, 'maxvalue',50));
             add(obj.p,param_float_slider('IdealMaskReduction',pars.Results.IdealMaskReduction,'minvalue',-50, 'maxvalue',0));
+            
+            obj.requires_noise=1;  % this module requires that noise is switched on
+            obj.requires_overlap_add=1;  % this module requires that overlap and add is switched on
+
+        s='IRM: ideal ratio mask reduces the noise in a signal with the knowledge of the clean signal';
+            s=[s, 'the parameters allow to change the threshold of reduction and the amount of noise reduction'];
+            obj.descriptor=s;
+            
             
         end
         
@@ -50,10 +60,10 @@ classdef rt_irm < rt_manipulator
                     
                 case 'Spectral based'
             end
-                        %% if overlap and add, there exist another module that needs to be updated too!!
+            %% if overlap and add, there exist another module that needs to be updated too!!
             % make sure that the other module doesn't get forgotton:
-             sync_initializations(obj); % in order to catch potential other modules that need to be updated!
-
+            sync_initializations(obj); % in order to catch potential other modules that need to be updated!
+            
         end
         
         function enhanced=apply(obj,noisy)
@@ -62,7 +72,7 @@ classdef rt_irm < rt_manipulator
             clean=obj.parent.clean_stim;
             if isempty(obj.parent.clean_stim) % forgot to switch on noise!
                 clean=noisy;
-                disp('IBM needs noise switched on!')
+                disp('IRM needs noise switched on!')
             end
             
             method=getvalue(obj.p,'Method');

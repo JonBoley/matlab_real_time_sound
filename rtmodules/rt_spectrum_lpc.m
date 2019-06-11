@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_spectrum_lpc < rt_spectrum
     
@@ -11,7 +14,10 @@ classdef rt_spectrum_lpc < rt_spectrum
         function obj=rt_spectrum_lpc(parent,varargin)  %init
             obj@rt_spectrum(parent,varargin{:});
             obj.fullname='Spectrogram with formants';
-            obj.show=1;
+%             obj.show=1;
+        
+            s='shows the spectrogram underneath and an estimate of the first three formants on top';
+            obj.descriptor=s;
         end
         
         

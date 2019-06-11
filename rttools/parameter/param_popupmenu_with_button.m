@@ -1,7 +1,9 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 % classdef param_popupmenu_with_button < param_popupmenu & param_button
 
-%   Copyright 2019 Stefan Bleeck, University of Southampton
 
 classdef param_popupmenu_with_button < param_popupmenu & param_button
 

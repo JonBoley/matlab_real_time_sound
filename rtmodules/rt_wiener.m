@@ -1,25 +1,27 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 
 classdef rt_wiener < rt_manipulator
     properties
-               hamming_win;
+        hamming_win;
         anWin;
         % set parameter values
-%         mu; % smoothing factor in noise spectrum update
-%         a_dd; % smoothing factor in priori update
-%         eta; % VAD threshold
+        %         mu; % smoothing factor in noise spectrum update
+        %         a_dd; % smoothing factor in priori update
+        %         eta; % VAD threshold
         %         noisePowMat;
         U;
         G_prev;
         posteri_prev;
         
-%   Copyright 2019 Stefan Bleeck, University of Southampton
         % noise power
         
         noisePow;
         %constants for a posteriori SPP
-%         q;
+        %         q;
         priorFact;
         xiOptDb;
         xiOpt;
@@ -44,15 +46,36 @@ classdef rt_wiener < rt_manipulator
             parse(pars,varargin{:});
             add(obj.p,param_float_slider('smoothing factor in apriori',pars.Results.a_dd,'minvalue',0, 'maxvalue',1));
             add(obj.p,param_float_slider('a priori speech probability',pars.Results.q,'minvalue',0, 'maxvalue',1));
-                
+            
+            obj.requires_overlap_add=1; % this module only runs properly with overlap add switched on
+            
+            s='Wiener filter implementation  Plapous et al 2006. Code from the authors adapted slightly for real time';
+            s=[s,'Description : Wiener filter based on tracking a priori SNR using Decision-Directed  '];
+            s=[s, 'method, proposed by Plapous et al 2006. The two-step noise reduction '];
+            s=[s,' (TSNR) technique removes the annoying reverberation effect while '];
+            s=[s,' maintaining the benefits of the decision-directed approach. However, '];
+            s=[s,' classic short-time noise reduction techniques, including TSNR, introduce '];
+            s=[s,' harmonic distortion in the enhanced speech. To overcome this problem, a '];
+            s=[s,' method called harmonic regeneration noise reduction (HRNR)is implemented '];
+            s=[s,' in order to refine the a priori SNR used to compute a spectral gain able  '];
+            s=[s,' to preserve the speech harmonics. '];
+            s=[s, 'references:  '];
+            s=[s,'"Unbiased MMSE-Based Noise Power Estimation with Low Complexity and Low Tracking Delay", IEEE TASL, 2012'];
+            s=[s,' Plapous, C.; Marro, C.; Scalart, P., "Improved Signal-to-Noise Ratio Estimation for Speech Enhancement", '];
+            s=[s,' IEEE Transactions on Audio, Speech, and Language Processing, Vol. 14, Issue 6, pp. 2098 - 2108, Nov. 2006 '];
+            s=[s, ' More information: https://en.wikipedia.org/wiki/Wiener_filter'];
+            obj.descriptor=s;
+            
+            
         end
         
         
         function post_init(obj) % called the second times around
+            post_init@rt_manipulator(obj);
             
-%             mu=getvalue(obj.p,'smoothing factor in noise'); % smoothing factor in noise spectrum update
+            %             mu=getvalue(obj.p,'smoothing factor in noise'); % smoothing factor in noise spectrum update
             a_dd=getvalue(obj.p,'smoothing factor in apriori');  % smoothing factor in priori update
-%             eta=getvalue(obj.p,'VAD threshold'); % VAD threshold
+            %             eta=getvalue(obj.p,'VAD threshold'); % VAD threshold
             
             fs=obj.parent.SampleRate;
             frame_dur=obj.parent.FrameLength/fs;
@@ -100,18 +123,18 @@ classdef rt_wiener < rt_manipulator
             obj.xiOpt      = 10.^(obj.xiOptDb./10);
             obj.logGLRFact = log(1./(1+obj.xiOpt));
             obj.GLRexp     = obj.xiOpt./(1+obj.xiOpt);
-                  
+            
             %% if overlap and add, there exist another module that needs to be updated too!!
             % make sure that the other module doesn't get forgotton:
-             sync_initializations(obj); % in order to catch potential other modules that need to be updated!
-      
+            sync_initializations(obj); % in order to catch potential other modules that need to be updated!
+            
             
         end
         
         function enhanced=apply(obj,noisy)
             
             a_dd=getvalue(obj.p,'smoothing factor in apriori');  % smoothing factor in priori update
-
+            
             L=length(noisy);
             noisy= noisy.* obj.hamming_win;
             noisy_fft= fft( noisy, L);
@@ -142,7 +165,7 @@ classdef rt_wiener < rt_manipulator
             %%%% papers: "Unbiased MMSE-Based Noise Power Estimation with Low Complexity and Low Tracking Delay", IEEE TASL, 2012
             %%%% "Noise Power Estimation Based on the Probability of Speech Presence", Timo Gerkmann and Richard Hendriks, WASPAA 2011
             %%%% Input :        noisy:  noisy signal
-            %%%%                   fs:  sampling frequency
+            %%%    fs:  sampling frequency
             %%%%
             %%%% Output:  noisePowMat:  matrix with estimated noise power for each frame
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 
@@ -12,7 +15,6 @@ classdef rt_waveform < rt_visualizer
         function obj=rt_waveform(parent,varargin)
             obj@rt_visualizer(parent,varargin{:});
             obj.fullname='Waveform';
-            obj.descriptor='shown is the physical pressure amplitude of the sound waveform as a function of time. The unit on the y-axis is Pascal';
             pre_init(obj);  % add the parameter gui
             
             pars = inputParser;
@@ -20,6 +22,9 @@ classdef rt_waveform < rt_visualizer
             addParameter(pars,'zoom',1);
             parse(pars,varargin{:});
             add(obj.p,param_float_slider('zoom',pars.Results.zoom,'minvalue',1,'maxvalue',100,'scale','log'));
+     
+                    obj.descriptor='shown is the physical pressure amplitude of the sound waveform as a function of time. The unit on the y-axis is Pascal';
+
         end
         
         function post_init(obj) % called the second times around
@@ -44,6 +49,7 @@ classdef rt_waveform < rt_visualizer
 %             global_time=obj.parent.global_time;
             push(buf,sig);
             y=get(buf);
+            y=y(1:length(obj.x_vals));
 %             allx=linspace(global_time,global_time+obj.parent.PlotWidth,length(y));
             pmax=obj.P0*power(10,obj.parent.max_file_level/20); % calibrate this to the assumed maximum amplitude of a wav file
             g=getvalue(obj.p,'zoom');

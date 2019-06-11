@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_pitch < rt_measurer
     properties
@@ -34,6 +37,12 @@ classdef rt_pitch < rt_measurer
             add(obj.p,param_number('WindowLength',pars.Results.WindowLength));
             add(obj.p,param_twonumbers('Range',pars.Results.Range));
             add(obj.p,param_number('MedianFilterLength',pars.Results.MedianFilterLength));
+            
+            s='pitch estimates the fundamental frequeny';
+            s=[s,'implementation from the matlab function ''pitch'' described here:'];
+            s=[s, 'https://uk.mathworks.com/help/audio/ref/pitch.html'];
+            obj.descriptor=s;
+ 
             
             
         end

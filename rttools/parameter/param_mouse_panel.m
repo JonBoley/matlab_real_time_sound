@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef param_mouse_panel < parameter
     properties (SetAccess = protected)
@@ -34,11 +37,13 @@ classdef param_mouse_panel < parameter
         % addupgain. return values are threshold and ratio
         function [thresh,ratio]=getcompressorvalues(param)
             vv=getvalue(param);
-            thresh=param.limits2(1)-vv(2,2);
-            ratio=(param.limits2(1)-vv(2,1))/(param.limits2(1)-vv(2,2));
-            ratio=min(ratio,1);
+            thresh=vv(2,2)-vv(3,2);
+            ratio=(vv(2,2)-vv(3,2))/(vv(2,1)-vv(3,1));
+            ratio=1/ratio;
+            ratio=max(ratio,1);
+            ratio=min(ratio,50);
             thresh=min(thresh,0);
-            thresh=max(thresh,-50);
+%             thresh=max(thresh,-50);
         end
         
         function vv=getvalue(param)  % get the value of this param

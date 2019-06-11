@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef param_float_slider < param_float
     properties (SetAccess = protected)
@@ -51,7 +54,7 @@ classdef param_float_slider < param_float
                 setvalue@param_float(param,val);
             end
             
-            if param.hand(1)>0
+            if param.hand(1)>0 && ishandle(param.hand(2))
                 set(param.hand(2),'Value',string(param.value)); % edit
                 val=f2f(param.value,param.minvalue,param.maxvalue,0,1,param.scale_to_slider); % translate to the scaled value
                 set(param.hand(4),'Value',val);  %slide
@@ -85,9 +88,7 @@ classdef param_float_slider < param_float
             param.is_changed=1;
 %             eval(param.callback_function); % and tell the rest of the world, if they are listening
         end
-        
-%   Copyright 2019 Stefan Bleeck, University of Southampton
-        
+                
         function draw(param,parentpanel,x,y)
             draw@param_float(param,parentpanel,x,y+param.unit_scaley);
             [~,elem2]=getelementpositions(param,parentpanel,x,y);

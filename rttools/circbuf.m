@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 %% circular buffer for 2Dimensional doubles
 % always assume the first dimension is the shifting one!

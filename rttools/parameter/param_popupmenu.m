@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef param_popupmenu < parameter
     properties (SetAccess = protected)
@@ -20,7 +23,7 @@ classdef param_popupmenu < parameter
             for i=1:length(param.list)
                 if isequal(param.list{i},val)
                     param.value=val;
-                    if param.hand(1)>0
+                    if param.hand(1)>0 && ishandle(param.hand(2))
                         set(param.hand(2),'Value',val);
                     end
                     param.is_changed=1;

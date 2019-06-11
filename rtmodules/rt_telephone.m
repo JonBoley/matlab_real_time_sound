@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 
@@ -15,20 +18,11 @@ classdef rt_telephone < rt_manipulator
             obj.fullname='Telephone';
             pre_init(obj);  % add the parameter gui
             
-            %             pars = inputParser;
-            %             pars.KeepUnmatched=true;
-            %             addParameter(pars,'gain',1);
-            %             parse(pars,varargin{:});
-            %             obj.p=add(obj.p,param_slider('gain',pars.Results.gain,'minvalue',-20, 'maxvalue',20));
-            
-            
-            %
-            %             if nargin<2
-            %                 name='Telephone';
-            %             end
-            %
-            %             obj@manipulator(parent,name);
-            %             obj.parent=parent;
+            s='simple bandpass filter implementing a phone filter 300-3400 telephone bandwidth ';
+            s=[s, 'implementation from Mike Brookes via mathwork central. '];
+            s=[s, 'The filter meets the specifications of G.151 for any sample frequency and has a gain of -3dB at the passband edges.'];
+
+            obj.descriptor=s;
             
         end
         

@@ -1,9 +1,12 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_nap < rt_visualizer
     
     properties
         aimmodel;
-        viz_buffer;
+        nap_buffer;
         xlab;
         ylab;
             end
@@ -27,6 +30,13 @@ classdef rt_nap < rt_visualizer
             add(obj.p,param_number('highest_frequency',pars.Results.highest_frequency));
             add(obj.p,param_float_slider('zoom ',pars.Results.zoom,'minvalue',1,'maxvalue',100,'scale','log'));
             
+            s='neural activity pattern represents graphically the activity in the auditory brainstem';
+            s=[s,'accoding to the auditory image model'];
+            s=[s,'implementation by Stefan Bleeck and followig the paper:'];
+            s=[s,'Bleeck, Stefan, Ives, Tim and Patterson, Roy D. (2004) Aim-mat: the auditory image model in MATLAB. Acta Acustica united with Acustica, 90 (4), 781-787.'];
+            obj.descriptor=s;
+            
+            
         end
         
         function post_init(obj) % called the second times around
@@ -44,11 +54,11 @@ classdef rt_nap < rt_visualizer
             obj.aimmodel=caim(sample_rate,num_channels,lowfre,highfre,window_length);
             obj.aimmodel=setmode(obj.aimmodel,'NAP'); % I only want the NAP.
             
-            obj.viz_buffer=circbuf(round(obj.parent.PlotWidth*obj.parent.SampleRate),num_channels);
+            obj.nap_buffer=circbuf(round(obj.parent.PlotWidth*obj.parent.SampleRate),num_channels);
             
-            imagesc(get(obj.viz_buffer)','parent',ax);
+            imagesc(get(obj.nap_buffer)','parent',ax);
             set(ax,'ylim',[1 num_channels]);
-            set(ax,'xlim',[1 getlength(obj.viz_buffer)]);
+            set(ax,'xlim',[1 getlength(obj.nap_buffer)]);
 
             fs=obj.aimmodel.centre_frequencies;
             
@@ -63,18 +73,19 @@ classdef rt_nap < rt_visualizer
             set(ax,'YTickLabel',obj.ylab);
             
             xt=get(ax,'xtick');
-            xtt=xt/window_length*obj.parent.PlotWidth;
+            xtt=xt/getlength(obj.nap_buffer)*obj.parent.PlotWidth;
             for i=1:length(xt)
-                obj.xlab{i}=num2str(round(xtt(i)*1000)/1000);
+                obj.xlab{i}=sprintf('%2.2f',xtt(i));
             end
               % create an interesting color map: from white to black
-            c=colormap(ax);
-            c(:,:)=1; % first make all white
-            c(1:64,1)=linspace(1,0,64);
-            c(1:64,2)=linspace(1,0,64);
-            c(1:64,3)=linspace(1,0,64);
-            colormap(ax,c);
+% nr_colors=100;
+%                     c(:,:)=1; % first make all white
+%                     c(1:nr_colors,1)=linspace(1,0,nr_colors);
+%                     c(1:nr_colors,2)=linspace(1,0,nr_colors);
+%                     c(1:nr_colors,3)=linspace(1,0,nr_colors);
+%                     colormap(vax,c);
             
+            colormap(ax,parula(128));
             view(ax,0,270);
             set(ax,'CLim',[0 64])
             
@@ -96,20 +107,14 @@ classdef rt_nap < rt_visualizer
             
             
             ax=obj.viz_axes;
-            specbuf=obj.viz_buffer;
-            
-            
             [~,nap]=step(obj.aimmodel,sig);
-            specbuf=push(specbuf,nap');
-            
-             vals=get(specbuf)';
+            push(obj.nap_buffer,nap');
+            vals=get(obj.nap_buffer)';
             z=getvalue(obj.p,'zoom ');
             random_calibrtion_value=2;
             vals=vals.*random_calibrtion_value;
             vals=vals.*z;
-            
             image(vals,'parent',ax);
-            view(ax,0,270);
             
 
         end

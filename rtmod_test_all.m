@@ -1,101 +1,92 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
 
-% test all modules in the directory for errors and speed
+
+% test all modules in the directory for errors, messages and speed
 cd('/Users/bleeck/Google Drive/projects/realtime');
 clear all
 close all force
 clc
 addpath(genpath('./rttools'));
 addpath(genpath('./rtmodules'));
-
-%   Copyright 2019 Stefan Bleeck, University of Southampton
-%wanted:
-wanted='rt_amplify.m';
-
-% f=uifigure('Units','pixel');
-% f1=uipanel(f,'Position',[1 1 400 200]);
-% f2=uipanel(f,'Position',[1 201 400 200]);
-f1=[];f2=[];
+addpath(genpath('./thirdparty'));
 
 wdir='rtmodules';
 base_d=cd(wdir);
-l=dir();
+allfiles=dir();
 obj=[];
-for i=1:length(l)
-    ll=l(i).name;
+r=[];c=0;
+for i=1:length(allfiles)
+    ll=allfiles(i).name;
     %     ll
     if contains(ll,'.m') && ~contains(ll,'~')
         %         i
-        if isequal(ll,wanted)
-            name=ll(1:end-2);
-            str=sprintf('o=%s(obj);',name);
-            eval(str);
-            ud=cd(base_d);
-            runo(o,f1,f2);
-            base_d=cd(ud);
+        name=ll(1:end-2);
+        fprintf('%d: starting %s',i,name);
+        str=sprintf('o=%s(obj);',name);
+        eval(str);
+        ud=cd(base_d);
+        c=c+1;
+        rr=runo(o);
+        if ~isempty(rr)
+            r{c}=rr;
         end
+        base_d=cd(ud);
+        fprintf(' finished\n');
+
+% clear all
+close all force
     end
 end
 cd(base_d);
 
-
-function runo(obj,f1,f2)
-
-if obj.show==0
-    fprintf('not running module ''%s''\n\n\n',obj.fullname);
-    return
+c=0;
+rnn=[];
+for i=1:length(r)
+    i
+    if ~isempty(r{i})
+        c=c+1;
+        rnn{c}=r{i};
+    end
 end
 
-parent=[]; % just for show doesn't need to do anything
-parent.viz_panel=f1;
-parent.meas_panel=f2;
+save_excel(rnn,'fullinfo.csv');
+
+function res=runo(mod)
+
+runtime=1;
 
 
-m=rtmodel(parent);
-m.Fs=22050;m.frame_length=256;
-filename='/Users/bleeck/Google Drive/projects/realtime/bkb.wav';% input: always the same wav file
-d=audioinfo(filename); %load the wave for further info
-length_s=d.Duration; % how long is the file?
-
-inp=rt_input_file(m,'filename',filename,'foldername','/Users/bleeck/Google Drive/projects/realtime');
-m=add_module(m,inp);
-
-% obj is the only model that we investiate:
-m=add_module(m,obj);
 
 
-% save to a file
-% out=rtoutput_speaker(m,'Default');
+mymodel=rt_model('SampleRate',22050,'FrameLength',mod.requires_frame_length,'Channels',mod.requires_nr_channels,'Duration',runtime,'OverlapAdd',mod.requires_overlap_add);
+module_1=rt_input_file_random(mymodel,'foldername','./randomwavs');
+add_module(mymodel,module_1);
 
-%             ADR = audioDeviceWriter;
-%             devices=getAudioDevices(ADR);
+if mod.requires_noise
+    module_2=rt_add_file(mymodel,'foldername','./noises','filename','Pink.wav');
+    add_module(mymodel,module_2);
+end
 
-out=rt_output_speaker(obj,'system_output_type','Default');
-m=add_module(m,out);
+add_module(mymodel,mod);
 
-howmany='once';
-% howmany='many';
-% howmany='oneframe';
-
-
+gui(mymodel);
+initialize(mymodel);
 tic
-switch howmany
-    case 'oneframe'
-        m.frame_length=m.Fs*length_s;
-        setvalue(obj.p,'integrationPeriod',length_s); % make sure it's integrating only once over the whole period
-        m=initialize(m);
-        run_sigle_frame(m); % simulate for the duration of the file
-    case 'once'
-        m=initialize(m);
-        s=save_script_file(m,'myscript.m');
-        run_once(m); % simulate for the duration of the file
-    case 'many'
-        m=initialize(m);
-        run(m); % simulate infinetly
-end
+run_once(mymodel);
 
+res.filename=mod.modname;
+res.manipulator=mod.is_manipulation;
+res.visuzlizer=mod.is_visualization;
+res.measurement=mod.is_measurement;
+res.input=mod.is_input;
+res.output=mod.is_output;
+res.requires_noise=mod.requires_noise;  % this module requires a clean signal and a noise signal (haspi, ibm, etc)
+res.requires_nr_channels=mod.requires_nr_channels; % the number of channels required minimum. usually one
+res.requires_overlap_add=mod.requires_overlap_add; % this module requires overlap and add switched on to work properly
 
-
-t=toc;
-fprintf('finished. real time factor: %2.3f %%\n\n',length_s/t*100);
+res.fullname=mod.fullname;
+res.speed=2/toc*100;
+res.description=mod.descriptor;
 
 end

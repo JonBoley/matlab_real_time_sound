@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_roughness < rt_measurer
     properties
@@ -10,14 +13,18 @@ classdef rt_roughness < rt_measurer
         function obj=rt_roughness(parent,varargin)
             obj@rt_measurer(parent,varargin);
             obj.fullname='Roughness - fluctuation strength';
-            obj.descriptor='from the psysoundpro toolbox (https://sourceforge.net/projects/psysoundpro/)';
             pre_init(obj);  % add the parameter gui
             
             pars = inputParser;
             pars.KeepUnmatched=true;
             %             addParameter(pars,'waitPeriod',0);
-            parse(pars,varargin{:});
+            %             parse(pars,varargin{:});
             %             add(obj.p,param_number('waitPeriod',pars.Results.waitPeriod));
+            
+            s='Rougness estimates the perceived roughness of a sound';
+            s=[s,'from the psysoundpro toolbox (https://sourceforge.net/projects/psysoundpro/)'];
+            obj.descriptor=s;
+            
         end
         
         function obj=post_init(obj)

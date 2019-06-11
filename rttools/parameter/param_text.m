@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 % read only text class: just for info in element2
 classdef param_text < parameter
@@ -15,7 +18,7 @@ classdef param_text < parameter
         
         function setvalue(param,v)  % set the value of this param
             param.value=v;
-            if param.hand(1)>0
+            if param.hand(2)>0 && ishandle(param.hand(2))
                 set(param.hand(2),'Text',string(param.value));
             end
         end

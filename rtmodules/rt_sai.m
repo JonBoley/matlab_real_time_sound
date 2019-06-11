@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_sai < rt_visualizer & rt_measurer
     
@@ -39,6 +42,16 @@ classdef rt_sai < rt_visualizer & rt_measurer
             add(obj.p,param_number('lowest_frequency',pars.Results.lowest_frequency));
             add(obj.p,param_number('highest_frequency',pars.Results.highest_frequency));
             add(obj.p,param_float_slider('zoom',pars.Results.zoom,'minvalue',1,'maxvalue',100,'scale','log'));
+       
+        
+           s='stabilized auditory image represents graphically the activity in the auditory brainstem';
+            s=[s,'accoding to the auditory image model'];
+            s=[s,'implementation by Stefan Bleeck and followig the paper:'];
+            s=[s,'Bleeck, Stefan, Ives, Tim and Patterson, Roy D. (2004) Aim-mat: the auditory image model in MATLAB. Acta Acustica united with Acustica, 90 (4), 781-787.'];
+            
+            
+           obj.descriptor=s; 
+        
         end
         
         
@@ -80,21 +93,23 @@ classdef rt_sai < rt_visualizer & rt_measurer
                     set(vax,'YTickLabel',obj.ylab);
                     
                     xt=get(vax,'xtick');
-                    xtt=xt/window_length*0.035;
+                    xtt=xt/getlength(obj.buffer)*obj.parent.PlotWidth;
                     for i=1:length(xt)
-                        obj.xlab{i}=num2str(round(xtt(i)*1000)/1000);
+                        obj.xlab{i}=sprintf('%2.1f',xtt(i));
                     end
-                    
+                    set(vax,'xticklabel',obj.xlab);
                     % create an interesting color map: from white to black
-                    c=colormap(vax);
-                    c(:,:)=1; % first make all white
-                    c(1:64,1)=linspace(1,0,64);
-                    c(1:64,2)=linspace(1,0,64);
-                    c(1:64,3)=linspace(1,0,64);
-                    colormap(vax,c);
+                    %                     c=colormap(vax);
+                    %                     nr_colors=100;
+                    %                     c(:,:)=1; % first make all white
+                    %                     c(1:nr_colors,1)=linspace(1,0,nr_colors);
+                    %                     c(1:nr_colors,2)=linspace(1,0,nr_colors);
+                    %                     c(1:nr_colors,3)=linspace(1,0,nr_colors);
+                    %                     colormap(vax,c);
+                    colormap(vax,parula(128));
                     
                     view(vax,0,270);
-                    set(vax,'CLim',[0 64])
+                    set(vax,'CLim',[0 128])
                     
                 else % only one channel: for debugging
                     cla(vax,'reset');

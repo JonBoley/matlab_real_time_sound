@@ -1,4 +1,5 @@
-
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
 
 
 classdef rt_measurer < rt_module
@@ -15,7 +16,19 @@ classdef rt_measurer < rt_module
         
         function obj=post_init(obj) % called the second times around
             post_init@rt_module(obj);
+            
+            % no need for translation from panel to axis, as there is
+            % always only one measurement axis. 
+            % 
+%             if ~isempty(obj.meas_panel)
+%                 p=obj.meas_panel.InnerPosition;
+%                 obj.measurement_axis=uiaxes(obj.meas_panel,'Position',[1 1 p(3)-2 p(4)-2]);
+%                 cla(obj.measurement_axis,'reset');
+%             else
+%                 obj.meas_panel=[]; % indicate that we don't want to see anything
+%             end
         end
+        
         
         function result=calculate(obj,sig)
             result=-1;
@@ -25,7 +38,6 @@ classdef rt_measurer < rt_module
             t=obj.parent.global_time-obj.measuring_start_time;
         end
         
-        
-    end    
+    end
 end
 

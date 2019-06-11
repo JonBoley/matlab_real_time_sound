@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef param_float < parameter
     properties (SetAccess = public)
@@ -54,7 +57,7 @@ classdef param_float < parameter
             param.is_changed=1;
             
             if nargin<3
-                if param.hand(1)>0
+            if param.hand(2)>0 && ishandle(param.hand(2))
                     set(param.hand(2),'Value',string(param.value));
                 end
                 return

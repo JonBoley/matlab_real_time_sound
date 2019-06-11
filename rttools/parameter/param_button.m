@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef param_button < parameter
     properties (SetAccess = protected)
@@ -22,7 +25,7 @@ classdef param_button < parameter
             param.button_text=pars.Results.button_text;
         end
         
-        function button_callback_fct(param)
+         function button_callback_fct(param)
             eval(param.button_callback_function);
         end
         

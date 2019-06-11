@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_sharpness < rt_measurer
     properties
@@ -24,11 +27,10 @@ classdef rt_sharpness < rt_measurer
             parse(pars,varargin{:});
             add(obj.p,param_number('integrationPeriod',pars.Results.integrationPeriod));
             
-            % addParameter(pars,'integration_length',0.4);
-            %             parse(pars,varargin{:});
-            %             add(obj.p,param_float('integration_length',pars.Results.integration_length));
-            %             add(obj.p,param_popupmenu('Visualization',pars.Results.Visualization,'list',cas));
-            
+            s='Loudness estimates subjective loudness perception based on ISO 532 B / DIN 45 631';
+            s=[s,'% Source: BASIC code in J Acoust Soc Jpn (E) 12, 1 (1991)'];
+            s=[s,'implementation from https://www.salford.ac.uk/research/sirc/research-groups/acoustics/psychoacoustics/sound-quality-making-products-sound-better/accordion/sound-quality-testing/matlab-codes'];
+           obj.descriptor=s; 
         end
         
         function post_init(obj)

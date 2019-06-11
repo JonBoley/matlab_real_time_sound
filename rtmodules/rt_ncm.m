@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_ncm < rt_measurer
     properties
@@ -18,6 +21,17 @@ classdef rt_ncm < rt_measurer
             addParameter(pars,'integrationPeriod',0.5);  % buffer for computation MUST be >0.4 sec!
             parse(pars,varargin{:});
             add(obj.p,param_float('integrationPeriod',pars.Results.integrationPeriod));
+            
+            s='estimation of speech intellegibility using  normalized covariance metric.';
+            s=[s, 'and requires the clean signal'];
+            s=[s, 'Reference'];
+            s=[s, '[1]  Ma, J., Hu, Y. and Loizou, P. (2009). "Objective measures for'];
+            s=[s, 'predicting speech intelligibility in noisy conditions based on new band-importance'];
+            s=[s, 'functions", Journal of the Acoustical Society of America, 125(5), 3387-3405.'];
+            s=[s, 'Authors:  Fei Chen and Philipos C. Loizou '];
+            s=[s, 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2806444/'];
+            obj.descriptor=s;
+            
             
         end
         
@@ -54,6 +68,8 @@ classdef rt_ncm < rt_measurer
             y=get(obj.ncm_buffer);
             measax=obj.measurement_axis;
             plot(measax,x,y,'.-');
+                         set(measax,'xlim',[0 length(x)],'ylim',[0 0.5]);
+
         end
         
         function close(obj)

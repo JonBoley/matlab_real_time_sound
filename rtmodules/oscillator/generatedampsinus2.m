@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 function sig=generatedampsinus2(len,carfre,nr_pulses,pulse_dist,amplitude,halflife,jitter,mode)
 

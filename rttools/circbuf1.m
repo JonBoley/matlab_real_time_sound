@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 %% circular buffer for 1Dimensional doubles
 classdef circbuf1 < handle
@@ -6,7 +9,6 @@ classdef circbuf1 < handle
         len
     end
     
-%   Copyright 2019 Stefan Bleeck, University of Southampton
     methods
         function obj=circbuf1(len)
             obj.len=len;
@@ -26,6 +28,10 @@ classdef circbuf1 < handle
         end
         function l=getlength(obj)
             l=obj.len;
+        end
+        
+        function add(obj,v)
+            obj.data=obj.data+v;
         end
     end
 end

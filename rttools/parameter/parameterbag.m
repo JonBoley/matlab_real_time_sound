@@ -1,3 +1,5 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
 
 classdef parameterbag < handle
     properties
@@ -135,7 +137,6 @@ classdef parameterbag < handle
                 pbag.guihandle.Name=pbag.name;
                 %             pbag.guihandle.CloseRequestFcn='@(f, event)my_closereq(f)';
                 
-%   Copyright 2019 Stefan Bleeck, University of Southampton
                 [maxtotalwidth,totalheight,maxtextwidth]=get_size(pbag,pbag.guihandle);
                 
                 maxtotalwidth=maxtotalwidth+x_edge_left+x_edge_right;

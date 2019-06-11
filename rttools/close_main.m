@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 function close_main(p)
 close(p);
 % set(0,'ShowHiddenHandles','on');

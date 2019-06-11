@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_dBSPL < rt_measurer
     properties
@@ -22,7 +25,11 @@ classdef rt_dBSPL < rt_measurer
             parse(pars,varargin{:});
             add(obj.p,param_popupmenu('Bandwidth',pars.Results.Bandwidth,'list',banks));
             
-            obj.descriptor='Sound level meter. A-level code The A-weighting filter''s coefficients are acccording to IEC 61672-1:2002 standard from https://uk.mathworks.com/matlabcentral/fileexchange/46819-a-weighting-filter-with-matlab';
+            s='Sound level meter. A-level code The A-weighting filter''s coefficients';
+            s=[s 'are acccording to IEC 61672-1:2002 standard from'];
+            s=[s ' https://uk.mathworks.com/matlabcentral/fileexchange/46819-a-weighting-filter-with-matlab'];
+            s=[s 'the module includes an octave band filter from the matlab implementation'];                      
+            obj.descriptor=s;
             
         end
         
@@ -69,7 +76,7 @@ classdef rt_dBSPL < rt_measurer
         
         function ret=calculate(obj,sig)
             
-            if size(sig,2)>1  % this measurement needs to be done on only one channel 
+            if size(sig,2)>1  % this measurement needs to be done on only one channel
                 sig=sig(:,1);
             end
             
@@ -86,9 +93,9 @@ classdef rt_dBSPL < rt_measurer
             
             dbmean= 20*log10(xx/obj.P0);
             sa = filterA(sig, obj.parent.SampleRate);
-               dbmeanA=rms(sa);   
-               dbmeanA=20*log10(dbmeanA/obj.P0);
-
+            dbmeanA=rms(sa);
+            dbmeanA=20*log10(dbmeanA/obj.P0);
+            
             %             ret.dbslow=20*log10(mean(get(obj.dbbuffer)));
             c=zeros(size(obj.octbandfilt));
             for i=1:length(obj.octbandfilt)

@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 classdef rt_model < handle   % derived from handle, so that every instance is just a pointer, not the full object
@@ -21,7 +24,7 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
         recorder;
         
         % calibration properties
-        calibration_gain_mic=2;  % these values are on my personal machine, might be different on different computers
+        calibration_gain_mic=-12;  % these values are on my personal machine, might be different on different computers
         gain_correct_speaker=3;
         input_gain=0;
         output_gain=0;
@@ -38,7 +41,7 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
         
         % needed for when adding noise
         snr=0;
-        add_noise_module=[];
+        add_noise_process=[];  % the module that adds noise. Also used as switch for initializatio when noise is required.
         
         %         pathes; % saves some pathnames from files and modules
         myname;
@@ -52,7 +55,7 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
             
             pars = inputParser;
             pars.KeepUnmatched=true;
-            addParameter(pars,'SampleRate',16000);
+            addParameter(pars,'SampleRate',22050);
             addParameter(pars,'FrameLength',256);
             addParameter(pars,'Channels',1);
             addParameter(pars,'OverlapAdd',0);
@@ -165,6 +168,11 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
             model.processes{nr+1}=opr;
         end
         
+        function setPlotWidth(model,t)
+            setvalue(model.p,'PlotWidth',t);
+            model.PlotWidth=t;
+        end
+        
         function run(obj,duration)
             if nargin<2
                 duration= inf;
@@ -199,7 +207,6 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
             duration=getvalue(model.p,'Duration');
             model.frame_counter=0;
             run(model,duration);
-            close(model);
         end
         
         function model=run_sigle_frame(model,duration)
@@ -248,20 +255,26 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
             gain=model.input_gain; % simple dB added
         end
         
-        % put up a gui for this specific model and add all the requied viz panels
-        function f=gui(obj,parent)
-            % count the processes that need graphics representation
-            if nargin<2
-                f=uifigure;
-            else
-                f=parent;
+            function [gain,calib]=get_output_calib(model,module)
+            % % %             % calibrate to the right level: all signal amplitudes are
+            % % %             % reported in Pascal
+            switch module.output_drain_type
+%                 case {'file','oscillator'}
+%                     maxdb=module.MAXVOLUME;
+%                     maxamp=module.P0*power(10,maxdb/20);
+%                     calib=20*log10(maxamp/1); % how many more dB because of pascale
+                case {'speaker','mic_speaker'}
+                    calib=model.calibration_gain_mic;
             end
-            
+            gain=model.output_gain; % simple dB added
+            end
+        
+        % put up a gui for this specific model and add all the requied viz panels
+        function myfigurehand=gui(obj,parent)
+            % count the processes that need graphics representation
             %             % check how the parameters sit on the right:
             %             [guiw,guih]=get_size(obj.p,f);
-            
-            
-            
+             
             nr_pans=0;
             for i=1:length(obj.processes)
                 pp=obj.processes{i};
@@ -271,6 +284,21 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
                     nr_pans=nr_pans+1;
                 end
             end
+            
+            if nr_pans==0  % if there are no panels, no need for a window
+                myfigurehand=0;
+                return
+            end
+            
+            if nargin<2
+                myfigurehand=uifigure;
+                register_window(obj,myfigurehand);
+            else
+                myfigurehand=parent;
+            end
+            
+
+            
             % now i know there are so many panels, arrange them nicely
             if nr_pans<=4 % put them all on top of each other
                 pan_height=200;
@@ -297,10 +325,10 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
                 pp=obj.processes{i};
                 if pp.is_visualization
                     nr_pans=nr_pans+1;
-                    pp.viz_panel=uipanel(f,'position',[x(nr_pans) y(nr_pans) w(nr_pans) h(nr_pans)]);
+                    pp.viz_panel=uipanel(myfigurehand,'position',[x(nr_pans) y(nr_pans) w(nr_pans) h(nr_pans)]);
                 elseif pp.is_measurement
                     nr_pans=nr_pans+1;
-                    pp.meas_panel=uipanel(f,'position',[x(nr_pans) y(nr_pans) w(nr_pans) h(nr_pans)]);
+                    pp.meas_panel=uipanel(myfigurehand,'position',[x(nr_pans) y(nr_pans) w(nr_pans) h(nr_pans)]);
                 end
             end
             
@@ -317,21 +345,21 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
             % and finally set the size of the main window to capture all:
             set(0,'units','pixel');
             screensize=get(0,'ScreenSize');
-            pos=get(f,'Position'); % resize figure
+            pos=get(myfigurehand,'Position'); % resize figure
             pos(3)=win_width;
             if win_height<screensize(4)
                 pos(4)=win_height;
-                f.Scrollable='off';
+                myfigurehand.Scrollable='off';
             else
                 pos(4)=screensize(4);
-                f.Scrollable='on';
+                myfigurehand.Scrollable='on';
             end
             pos(1)=screensize(3)-pos(3);
             pos(2)=screensize(4);
             
             
-            set(f,'Position',pos)
-            obj.main_figure=f;
+            set(myfigurehand,'Position',pos)
+            obj.main_figure=myfigurehand;
         end
         
         

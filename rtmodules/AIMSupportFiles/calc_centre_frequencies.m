@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 function centre_frequencies=calc_centre_frequencies(num_channels,lowFreq,highFreq)
 
 EarQ = 9.26449;				%  Glasberg and Moore Parameters

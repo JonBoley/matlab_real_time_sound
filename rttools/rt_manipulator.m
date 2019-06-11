@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 
@@ -12,6 +15,7 @@ classdef rt_manipulator < rt_module
         end
         
         function post_init(obj)
+             post_init@rt_module(obj);
         end
         
         function sync_initializations(obj)

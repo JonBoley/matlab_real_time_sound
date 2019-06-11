@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 function filename=get_new_filename(prefix,extension)
 % gives back the a name of a file that does not exist yet that has a number

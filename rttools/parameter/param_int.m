@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef param_int <  param_number
     properties (SetAccess = protected)
@@ -19,7 +22,7 @@ classdef param_int <  param_number
         
         function setvalue(param,v)  % set the value of this param
             param.value=round(v);
-            if param.hand(1)>0
+            if param.hand(1)>0 && ishandle(param.hand(2))
                 set(param.hand(2),'Value',string(param.value));
             end
             param.is_changed=1;
@@ -29,20 +32,6 @@ classdef param_int <  param_number
             v=getvalue(param);
             s = sprintf('''%s'',%d',param.text,round(v));
         end
-        
-        %
-        %         function disp(param)
-        %             fprintf('%s (number): %f\n',param.text,param.value);
-        %         end
-        %
-        % %         function ret=getparamsasstring(param,str)
-        % %             ret=sprintf('add(%s,param_number(''%s'',%f));',str,str,param.text,param.value);
-        % %         end
-        %
-        %         function ret= get_param_value_string(param,str) % return lines like 'setvalue(obj,'what','what')
-        %             ret=sprintf('setvalue(%s,''%s'',%f);',str,param.text,param.value);
-        %         end
-        
         
     end
 end

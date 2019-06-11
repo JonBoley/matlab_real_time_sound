@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 % input module, can return signals
@@ -19,19 +22,19 @@ classdef rt_input_file_random < rt_input
             
             pre_init(obj);  % add the parameter gui
             obj.input_source_type='file';
-            obj.show=1;  % show me as selectable to the user
+%             obj.show=1;  % show me as selectable to the user
             
             pars = inputParser;
             pars.KeepUnmatched=true;
-            addParameter(pars,'directory','.');
+            addParameter(pars,'foldername','.');
             parse(pars,varargin{:});
-            add(obj.p,param_foldername('directory',pars.Results.directory));
+            add(obj.p,param_foldername('foldername',pars.Results.foldername));
             
         end
         
         function post_init(obj) % called the second times around
             post_init@rt_input(obj);
-            dirname=getvalue(obj.p,'directory');
+            dirname=getvalue(obj.p,'foldername');
             close(obj);
             
             od=cd(dirname);
@@ -66,7 +69,7 @@ classdef rt_input_file_random < rt_input
             
             if eof  % load the next one
                 close(obj)
-                od=cd(getvalue(obj.p,'directory'));
+                od=cd(getvalue(obj.p,'foldername'));
                 rn=randperm(length(obj.allfilenames));
                 obj.filename=obj.allfilenames{rn(randi(length(rn)))};
                 obj.recorder= dsp.AudioFileReader(obj.filename,'PlayCount',1,'SamplesPerFrame',obj.file_frame_length);

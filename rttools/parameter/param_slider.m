@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 % small slider
 classdef param_slider < param_float
@@ -41,7 +44,7 @@ classdef param_slider < param_float
         
         function param=setvalue(param,val)  % get the value of this param
             param.value=val;
-            if param.hand(1)>0
+            if param.hand(2)>0 && ishandle(param.hand(2))
                 val=f2f(param.value,param.minvalue,param.maxvalue,0,1,param.scale_to_slider); % translate to the scaled value
                 set(param.hand(2),'Value',val);  % slider
                 set(param.hand(3),'Value',string(param.value)); % edit

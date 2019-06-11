@@ -1,13 +1,10 @@
-
-
-
-% Center Freq. based on number of channels. These values are taken from
-% Dorman, Loizou, Rainey, (1997). Speech intelligibility as a function of the number of channels
-% of stimulation for signal processors using sine-wave
-% and noise-band outputs. JASA
-
 %   Copyright 2019 Stefan Bleeck, University of Southampton
-% https://uk.mathworks.com/matlabcentral/fileexchange/69403-cochlear-implant-simulation
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
+
+
+
+
 
 
 
@@ -38,7 +35,13 @@ classdef rt_ci_sim < rt_manipulator
             add(obj.p,param_float_slider('NrChannels',pars.Results.NrChannels,'minvalue',2,'maxvalue',9));
             add(obj.p,param_popupmenu('type',pars.Results.type,'list',types));
             add(obj.p,param_float_slider('EnvCutoff',pars.Results.EnvCutoff,'minvalue',1,'maxvalue',500));
+         
             
+            s='Cochlear implant simulation simulates how a CI user might hear the world';
+            s=[s,'CI simulation implemented using code from here:'];
+            s=[s,' https://uk.mathworks.com/matlabcentral/fileexchange/69403-cochlear-implant-simulation'];
+            s=[s,''];
+            obj.descriptor=s;
         end
         
         function post_init(obj) % called the second times around

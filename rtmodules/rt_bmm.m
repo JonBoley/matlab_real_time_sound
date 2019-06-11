@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_bmm < rt_visualizer
     
@@ -26,6 +29,16 @@ classdef rt_bmm < rt_visualizer
             add(obj.p,param_number('lowest_frequency',pars.Results.lowest_frequency));
             add(obj.p,param_number('highest_frequency',pars.Results.highest_frequency));
             add(obj.p,param_float_slider('zoom ',pars.Results.zoom,'minvalue',1,'maxvalue',100,'scale','log'));
+            
+            s='the basilar membrane simulator simulates how the BM moves in response to sound';
+            s=[s,'gammatoneFilterBank decomposes a signal by passing it through a bank of gammatone filters equally spaced on the ERB scale. '];
+            s=[s,'Gammatone filter banks were designed to model the human auditory system.'];
+            s=[s,'the code is a wrapper of the MATLAB function gammatoneFilterBank'];
+            s=[s,'which in turn implements the Malcom Slaney version of a 4th order gammatone filter'];
+            s=[s,'[1] Slaney, Malcolm. "An Efficient Implementation of the Patterson-Holdworth Auditory Filter Bank." Apple Computer Technical Report 35, 1993.'];
+            s=[s,'[2] Patterson, R.d., K. Robinson, J. Holdsworth, D. Mckeown, C. Zhang, and M. Allerhand. "Complex Sounds and Auditory Images." Auditory Physiology and Perception. 1992, pp. 429?446.'];
+            obj.descriptor=s;
+        
         end
         
         function post_init(obj) % called the second times around
@@ -62,22 +75,23 @@ classdef rt_bmm < rt_visualizer
             set(ax,'YTickLabel',obj.ylab);
             
             xt=get(ax,'xtick');
-            xtt=xt/frame_length*obj.parent.PlotWidth;
+            xtt=xt/getlength(obj.viz_buffer)*obj.parent.PlotWidth;
             for i=1:length(xt)
-                obj.xlab{i}=num2str(round(xtt(i)*1000)/1000);
+                obj.xlab{i}=sprintf('%2.1f',xtt(i));
             end
             
             % create an interesting color map: from red to white and then to blue
+            nr_colors=100;
             c=colormap(ax);
             c(:,:)=1; % first make all white
-            c(1:32,1)=linspace(0,1,32);
-            c(1:32,2)=linspace(0,1,32);
-            c(33:64,2)=linspace(1,0,32);
-            c(33:64,3)=linspace(1,0,32);
+            c(1:nr_colors/2,1)=linspace(0,1,nr_colors/2);
+            c(1:nr_colors/2,2)=linspace(0,1,nr_colors/2);
+            c(nr_colors/2+1:nr_colors,2)=linspace(1,0,nr_colors/2);
+            c(nr_colors/2+1:nr_colors,3)=linspace(1,0,nr_colors/2);
             colormap(ax,c);
             
             view(ax,0,270);
-            set(ax,'CLim',[0 64])
+            set(ax,'CLim',[0 nr_colors])
             
             set(ax,'xticklabel',obj.xlab)
             set(ax,'yticklabel',obj.ylab)
@@ -105,10 +119,10 @@ classdef rt_bmm < rt_visualizer
             
             vals=get(specbuf)';
             z=getvalue(obj.p,'zoom ');
-            random_calibrtion_value=25;
+            random_calibrtion_value=100;
             vals=vals.*random_calibrtion_value;
             vals=vals.*z;
-            vals=vals+32;
+            vals=vals+50;
         
             image(vals,'parent',ax);
         end

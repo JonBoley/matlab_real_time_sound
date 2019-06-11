@@ -1,6 +1,13 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_full_gui <handle
     properties
+        
         all_manipulations=[];  % bag to store links to the maniplations in one place (it's easier)
         all_visualizations=[];
         all_measurements=[];
@@ -14,7 +21,6 @@ classdef rt_full_gui <handle
         
         input_process=[];
         add_noise_process=[];
-        add_noise_module=[];
         manipulation_process=[];
         visualization_process=[];
         measurement_process=[];
@@ -100,11 +106,11 @@ classdef rt_full_gui <handle
             sources{1}=o.fullname;
             obj.modules(sources{1})=o;
             
-            o=rt_input_file_random(obj,'directory',obj.pathes.wavpath);
+            o=rt_input_file_random(obj,'foldername',obj.pathes.wavpath);
             sources{2}=o.fullname;
             obj.modules(sources{2})=o;
             
-            o=rt_input_file(obj,'directory',pwd);
+            o=rt_input_file(obj,'foldername',pwd);
             sources{3}=o.fullname;
             obj.modules(sources{3})=o;
             
@@ -162,16 +168,16 @@ classdef rt_full_gui <handle
             end
             cd(od);
             
-            obj.add_noise_module=rt_input_add_file(obj,'foldername',obj.pathes.noisepath);
+            o=rt_add_file(obj,'foldername',obj.pathes.noisepath);
             % noise is special and must be added out of sync here. It will
             % never change (always the same base module) and we want to
             % mirror it's parameter here
-            obj.add_noise_process=add_module(obj.mymodel,obj.add_noise_module,'input'); %
+            obj.mymodel.add_noise_process=add_module(obj.mymodel,o,'input'); %
             
             add(obj.p,param_popupmenu('Noise',alln{1},'list',alln));
             add(obj.p,param_checkbox('AddNoise',0));
             
-            npar=getparameter(obj.add_noise_module.p,'attenuation');
+            npar=getparameter(obj.mymodel.add_noise_process.basic_module.p,'attenuation');
             add(obj.p,npar);
             
             ingain=param_slider('InputGain',0,'minvalue',-20,'maxvalue',50,'callback_function','change_gains(param.parent.parent.parent);');
@@ -205,8 +211,8 @@ classdef rt_full_gui <handle
                 case 'noise'
                     % noise
                     noisewav=getvalue(obj.p,'Noise');
-                    setvalue(obj.add_noise_module.p,'filename',noisewav);
-                    post_init(obj.add_noise_module);
+                    setvalue(obj.mymodel.add_noise_process.basic_module.p,'filename',noisewav);
+                    post_init(obj.mymodel.add_noise_process.basic_module);
                     %                     noisewav='Pink.wav';
                     %                     noiseatten=0;
                     %                     n_par=rt_input_add_file(obj,'filename',noisewav,'foldername',obj.pathes.noisepath,'attenuation',noiseatten); % pass the parameter for later selection
@@ -285,10 +291,10 @@ classdef rt_full_gui <handle
                     str=sprintf('o=%s(obj);',name);
                     eval(str);
                     obj.modules(o.fullname)=o;
-                    
-                    if o.show==0  % some modules don't need/want to be shown to user (inputs)
-                        continue
-                    end
+%                     
+%                     if o.show==0  % some modules don't need/want to be shown to user (inputs)
+%                         continue
+%                     end
                     
                     if o.is_manipulation %% add to screen as manipulation
                         obj.display_modules{1}(o.fullname)=o;
@@ -356,6 +362,14 @@ classdef rt_full_gui <handle
             end
             
             if has_changed(getparameter(obj.p,'PlotWidth'))
+                % some error checking. must be longer than the framelength
+                w=getvalue(obj.p,'PlotWidth');
+                n=getvalue(obj.p,'FrameLength');
+                sr=getvalue(obj.p,'SampleRate');
+                if n>ceil(w*sr)
+                    disp('plotwitdh must be longer than framelength!');
+                    setvalue(obj.p,'PlotWidth',n/sr);
+                end
                 fullgui_post_init(obj,'visualization');
                 fullgui_post_init(obj,'measurement');
             end
@@ -506,7 +520,7 @@ classdef rt_full_gui <handle
                     process(obj.input_process);
                     
                     if getvalue(obj.p,'AddNoise')
-                        process(obj.add_noise_process);
+                        process(obj.mymodel.add_noise_process);
                     end
                     
                     if getvalue(obj.p,'applyManipulation')
@@ -567,9 +581,9 @@ classdef rt_full_gui <handle
             % create the model,(with graphics)
             pstr=get_param_value_string(obj.p);
             valstr=[];
-            for i=1:5  % only take the main parameter, not the fluid ones below
+            for i=1:6  % only take the main parameter, not the fluid ones below
                 valstr=[valstr pstr{i}];
-                if i<5
+                if i<6
                     valstr=[valstr ','];
                 end
             end

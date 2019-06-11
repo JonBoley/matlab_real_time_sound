@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 
@@ -18,57 +21,100 @@ classdef rt_space < rt_manipulator
             pre_init(obj);  % add the parameter gui
             
             pars = inputParser;
-            %             addParameter(pars,'WetDryMix',0.3);
+            addParameter(pars,'azimuth',0);
+            addParameter(pars,'elevation',0);
+            
             parse(pars,varargin{:});
-            %             add(obj.p,param_float_slider('WetDryMix',pars.Results.WetDryMix,'minvalue',0, 'maxvalue',1));
+            add(obj.p,param_float_slider('azimuth',pars.Results.elevation,'minvalue',-180, 'maxvalue',180));
+            add(obj.p,param_float_slider('elevation',pars.Results.elevation,'minvalue',0, 'maxvalue',90));
+            
+            obj.requires_nr_channels=2; % we need 2 channels!
+            
+            s='Head related transfer function (HRTF) takes the input from ONE channel and calculates how ';
+            s=[s,'it would sound when it comes from a specific point in space. It uses the knowledge of'];
+            s=[s, ' the shape of the outer ear as well as interaural time and level differences'];
+            s=[s, ' the implementation is by S.Bleeck and uses the hrtfs from a public databse:'];
+            obj.descriptor=s;
             
         end
         
         function post_init(obj) % called the second times around
+            
+            if obj.parent.Channels<2
+                disp('SRTFs need 2 channels');
+                return
+            end
+            
             obj.stimbuf=circbuf1(obj.parent.SampleRate/10);  % 1 sec
+            
+            
         end
         
         function new_sig=apply(obj,sig)
-            % take the first channel and apply the two relevant HRTFs to
-            % simulate
-            mychannel=obj.channel_nr;  % 1=left, 2=right
             
-            % we are producing two channels out of one. We assume the first
-            % channel coming in as the input.
-            dir1='rtmodules/hrtfs';
-            
-            newelevation=0;
-            newangle=90;
-            if newelevation~=obj.elevation || newangle ~= obj.angle
+            if obj.parent.Channels<2
+                disp('SRTFs need 2 channels');
+                new_sig=sig;
+                return
+            end
+                
+                % take the first channel and apply the two relevant HRTFs to
+                % simulate
+                mychannel=obj.channel_nr;  % 1=left, 2=right
+                
+                % we are producing two channels out of one. We assume the first
+                % channel coming in as the input.
+                dir1='thirdparty/hrtfs';
+                
+                %             newelevation=0;
+                %             newangle=90;
+                newelevation=getvalue(obj.p,'elevation');
+                if newelevation ~=0
+                    disp('elevation only implemented for 0 degrees, sorry')
+                    newelevation=0;
+                end
+                
+                angle=getvalue(obj.p,'azimuth');
+                newangle=5*round(angle/5);
+                newangle=180-newangle;
+                if newangle==360
+                    newangle=0;
+                end
+                
+                
+                
+                if newelevation~=obj.elevation || newangle ~= obj.angle
+                    switch mychannel
+                        case 1
+                            lhname=sprintf('L%de%3da.wav',newelevation,newangle);
+                            lhtrffilename=strrep(lhname,' ','0');
+                            obj.hrtfleft=audioread(fullfile(dir1,lhtrffilename));
+                        case 2
+                            rhname=sprintf('R%de%3da.wav',newelevation,newangle);
+                            rhtrffilename=strrep(rhname,' ','0');
+                            obj.hrtfright=audioread(fullfile(dir1,rhtrffilename));
+                    end
+                    obj.elevation=newelevation;
+                    obj.angle=newangle;
+                end
+                
+                push(obj.stimbuf,sig);
+                s=get(obj.stimbuf,512); % the length of the hrtfs
+                
                 switch mychannel
                     case 1
-                        lhname=sprintf('L%de%3da.wav',newelevation,newangle);
-                        lhtrffilename=strrep(lhname,' ','0');
-                        obj.hrtfleft=audioread(fullfile(dir1,lhtrffilename));
+                        convded=conv(s,obj.hrtfleft,'same');
                     case 2
-                        rhname=sprintf('R%de%3da.wav',newelevation,newangle);
-                        rhtrffilename=strrep(rhname,' ','0');
-                        obj.hrtfright=audioread(fullfile(dir1,rhtrffilename));
+                        convded=conv(s,obj.hrtfright,'same');
                 end
+                
+                new_sig(:,1)=convded(1:256);
+                
             end
             
-            push(obj.stimbuf,sig);
-            s=get(obj.stimbuf,512); % the length of the hrtfs
-            
-            switch mychannel
-                case 1
-                    convded=conv(s,obj.hrtfleft,'same');
-                case 2
-                    convded=conv(s,obj.hrtfright,'same');
+            function change_parameter(obj)
+                gui(obj.p)
             end
-            
-            new_sig(:,1)=convded(1:256);
-            
         end
         
-        function change_parameter(obj)
-            gui(obj.p)
-        end
     end
-    
-end

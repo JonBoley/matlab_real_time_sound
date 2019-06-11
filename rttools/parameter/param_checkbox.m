@@ -1,3 +1,7 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
+%   Copyright 2019 Stefan Bleeck, University of Southampton
 
 classdef param_checkbox < parameter
     
@@ -8,7 +12,7 @@ classdef param_checkbox < parameter
         end
         function setvalue(param,v)  % set the value of this param
             param.value=v;
-            if param.hand(1)>0
+            if param.hand(2)>0 && ishandle(param.hand(2))
                 
                  set(param.hand(2),'Value',param.value);
 %                 if param.value==1   
@@ -20,7 +24,6 @@ classdef param_checkbox < parameter
             param.is_changed=1;
         end
         
-%   Copyright 2019 Stefan Bleeck, University of Southampton
         function size=get_draw_size(param,panel)
             size=get_draw_size@parameter(param,panel);
             size(1)=5*param.unit_scalex; % how wide every element is

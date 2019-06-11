@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_mfccs < rt_measurer
     properties
@@ -25,6 +28,11 @@ classdef rt_mfccs < rt_measurer
             add(obj.p,param_popupmenu('FilterBank',pars.Results.FilterBank,'list',banks));
             add(obj.p,param_number('NumCoeffs',pars.Results.NumCoeffs));
             add(obj.p,param_number('WindowLength',pars.Results.WindowLength));
+            
+            s='MFCCs (mel frequency cepstral coefficients) measures features of speech that are often used in automatic speech recognition';
+            s=[s,'the code is a wrapper for the matlab fuction ''cepstralfeatureextractor'''];
+            s=[s,'https://uk.mathworks.com/help/audio/ref/cepstralfeatureextractor-system-object.html'];
+            obj.descriptor=s;
             
         end
         

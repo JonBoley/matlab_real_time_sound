@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 % class that deals with rt modules. rt processes can do all that modules
@@ -60,7 +63,7 @@ classdef rtprocess_manipulation < rtprocess
                 %             switch chan
                 %                 case 'mono'
                 %                     nr_chan=1;
-                sig{1}=obj.parent.current_stim(:,1);
+                sig{i}=obj.parent.current_stim(:,i);
                 
                 %                 case 'stereo'
                 %                     nr_chan=2;
@@ -79,11 +82,11 @@ classdef rtprocess_manipulation < rtprocess
                 end
                 
             end
-            obj.parent.current_stim=sig{1};
-            if input_chan>1
-                for i=1:input_chan
-                    obj.parent.current_stim=[obj.parent.current_stim sig{i}];
-                end
+            if input_chan==1
+                obj.parent.current_stim=sig{1};
+            elseif input_chan==2
+                obj.parent.current_stim=[sig{1} sig{2}];
+                
             end
             %             if input_chan==1
             %                 obj.parent.current_stim=sig{1};

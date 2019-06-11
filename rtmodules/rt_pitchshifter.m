@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 
 
@@ -10,7 +13,7 @@ classdef rt_pitchshifter< rt_manipulator
     methods
         
         function obj=rt_pitchshifter(parent,varargin)
-            obj@rt_manipulator(parent,varargin);  % superclass contructor
+            obj@rt_manipulator(parent,varargin{:});  % superclass contructor
             obj.fullname='Delay-Based Pitch Shifter'; % full name identifies it later on the screen
             pre_init(obj);  % add the parameter gui
             
@@ -24,6 +27,7 @@ classdef rt_pitchshifter< rt_manipulator
             parse(pars,varargin{:});
             add(obj.p,param_float_slider('PitchShift',pars.Results.PitchShift,'minvalue',-12, 'maxvalue',12));
             add(obj.p,param_float_slider('overlap',pars.Results.overlap,'minvalue',0, 'maxvalue',1));
+            obj.descriptor='pitch shifter is implemented from this mathworks code: https://uk.mathworks.com/help/audio/examples/delay-based-pitch-shifter.html';
         end
         
         function post_init(obj) % called the second times around

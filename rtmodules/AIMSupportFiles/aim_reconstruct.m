@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 function sig=aim_reconstruct(bmm,nap,strobes,sai,simparams)
 sig=zeros(1,size(bmm,2));

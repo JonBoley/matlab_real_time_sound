@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 % parameter with one number that effects another number or string to the
 % right of it
@@ -27,7 +30,7 @@ classdef param_number_with_text < param_number
         function setvalue(param,v)  % set the value of this param
             param.value=v{1};
             param.value2=v{2};
-            if param.hand(1)>0
+            if param.hand(2)>0 && ishandle(param.hand(2))
                 set(param.hand(2),'Value',string(param.value));
                 set(param.hand(3),'Text',string(param.value2));
             end

@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rtprocess_visualization < rtprocess
     properties
@@ -55,7 +58,7 @@ classdef rtprocess_visualization < rtprocess
         function process(obj)
             sig=obj.parent.current_stim;
             for i=1:obj.parent.Channels % input channels
-                plot(obj.modules{i},sig);
+                plot(obj.modules{i},sig(:,i));
                 %             switch obj.parent.Channels
                 %                 case 'mono'
                 %                     plot(obj.modules,sig);

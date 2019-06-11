@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_loudness < rt_measurer
     properties
@@ -17,6 +20,11 @@ classdef rt_loudness < rt_measurer
             addParameter(pars,'integrationPeriod',0.5);  % buffer for computation MUST be >0.4 sec!
             parse(pars,varargin{:});
             add(obj.p,param_float('integrationPeriod',pars.Results.integrationPeriod));
+            
+            s='Loudness estimates the perceived Loudness of a sound';
+            s=[s,'using the matlab implementaiton of ''integratedLoudness'''];
+            s=[s,'https://uk.mathworks.com/help/audio/ref/integratedloudness.html'];
+            obj.descriptor=s;
         end
         
         function post_init(obj)
@@ -46,7 +54,8 @@ classdef rt_loudness < rt_measurer
             
             if ~isempty(measax)  % only plot when a measurement axis exists, if not, probably run from a script
                 plot(measax,x,y,'.-');
-            end
+                 set(measax,'xlim',[0 length(x)],'ylim',[-40 20]);
+        end
         end
         
         function close(obj)

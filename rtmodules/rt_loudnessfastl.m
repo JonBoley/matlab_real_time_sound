@@ -1,3 +1,6 @@
+%   Copyright 2019 Stefan Bleeck, University of Southampton
+%   Author: Stefan Bleeck (bleeck@gmail.com)
+
 
 classdef rt_loudnessfastl < rt_measurer
     properties
@@ -22,6 +25,10 @@ classdef rt_loudnessfastl < rt_measurer
             add(obj.p,param_float('integrationPeriod',pars.Results.integrationPeriod));
             add(obj.p,param_popupmenu('Visualization',pars.Results.Visualization,'list',cas));
             
+            s='Loudness (Fastl) estimates the perceived Loudness of a sound';
+            s=[s,'using the implementaiton from Hugo Fastl available here'];
+            s=[s,'https://www.salford.ac.uk/research/sirc/research-groups/acoustics/psychoacoustics/sound-quality-making-products-sound-better/accordion/sound-quality-testing/matlab-codes'];
+            obj.descriptor=s;
             
         end
         
@@ -81,7 +88,7 @@ classdef rt_loudnessfastl < rt_measurer
                         y=get(obj.loudness_buffer);
                         measax=obj.measurement_axis;
                         plot(measax,x,y,'.-');
-                        set(measax,'ylim',[0 4]);
+                        set(measax,'xlim',[0 length(x)],'ylim',[0 20]);
                         
                     case 'slow (full Barkscale)'
                         
