@@ -577,6 +577,7 @@ classdef rt_full_gui <handle
             n=n+1;s{n}='close all force';
             n=n+1;s{n}='addpath(genpath(''./rttools''));';
             n=n+1;s{n}='addpath(genpath(''./rtmodules''));';
+            n=n+1;s{n}='addpath(genpath(''./thirdparty''));';
             
             % create the model,(with graphics)
             pstr=get_param_value_string(obj.p);

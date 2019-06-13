@@ -57,7 +57,7 @@ classdef param_float < parameter
             param.is_changed=1;
             
             if nargin<3
-            if param.hand(2)>0 && ishandle(param.hand(2))
+            if param.hand(1)>0 && ishandle(param.hand(2))
                     set(param.hand(2),'Value',string(param.value));
                 end
                 return

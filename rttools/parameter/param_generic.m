@@ -6,9 +6,7 @@
 
 % parameter_generic has one string field
 classdef param_generic < parameter
-  
-%   Copyright 2019 Stefan Bleeck, University of Southampton
-    methods
+      methods
         function param=param_generic(text,val,varargin)
             param@parameter(text,val,varargin{:});
         end

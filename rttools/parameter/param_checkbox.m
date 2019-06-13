@@ -12,7 +12,7 @@ classdef param_checkbox < parameter
         end
         function setvalue(param,v)  % set the value of this param
             param.value=v;
-            if param.hand(2)>0 && ishandle(param.hand(2))
+            if param.hand(1)>0 && ishandle(param.hand(2))
                 
                  set(param.hand(2),'Value',param.value);
 %                 if param.value==1   

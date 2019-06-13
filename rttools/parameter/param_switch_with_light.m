@@ -11,16 +11,11 @@ classdef param_switch_with_light < param_checkbox
     methods (Access = public)
         function param=param_switch_with_light(text,val,varargin)
             param@param_checkbox(text,val,varargin{:});
-            %             pars = inputParser;
-            %             pars.KeepUnmatched=true;
-            %             addParameter(pars,'callback_function',[]);
-            %             parse(pars,varargin{:});
-            %             param.callback_function=pars.Results.callback_function;
         end
         
         function setvalue(param,v)  % set the value of this param
             param.value=v;
-            if param.hand(2)>0 && ishandle(param.hand(2))
+            if param.hand(1)>0 && ishandle(param.hand(2))
                 
                 if param.value==1
                     set(param.hand(2),'Value','ON');

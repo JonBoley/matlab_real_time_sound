@@ -29,7 +29,7 @@ classdef rt_module < handle & matlab.mixin.Copyable
         requires_noise=0;  % this module requires a clean signal and a noise signal (haspi, ibm, etc)
         requires_nr_channels=1; % the number of channels required minimum. usually one
         requires_overlap_add=0; % this module requires overlap and add switched on to work properly
-        requires_frame_length =256; % standard value, can be longer in some modules
+        requires_frame_length =32; % standard value, must be longer in some modules
     end
     
     methods

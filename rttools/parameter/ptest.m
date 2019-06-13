@@ -14,11 +14,13 @@ addpath(genpath('/Users/bleeck/Google Drive/projects/realtime/rttools'));
 %   Copyright 2019 Stefan Bleeck, University of Southampton
 p=parameterbag('my params');
 
-add(p,param_generic('1 parameter_generic','123'));
-add(p,param_audiogram('Audiogram',[0,10,10,20,40,50],'frequencies',[250,500,1000,2000,4000,6000]));
+add(p,param_compressor('0 param_compressor',[-50,1],'kneepoint',[50 50],'maxamplitude',[100 100]));
 
-add(p,param_generic('1 parameter_generic','123'));
-add(p,param_checkbox('2 param_checkbox',1));
+% add(p,param_generic('1 parameter_generic','123'));
+% add(p,param_audiogram('Audiogram',[0,10,10,20,40,50],'frequencies',[250,500,1000,2000,4000,6000]));
+% 
+% add(p,param_generic('1 parameter_generic','123'));
+% add(p,param_checkbox('2 param_checkbox',1));
 % add(p,param_checkbox_with_button('3 param_checkbox_with_button',1,'button_callback_function','calback from checkbox','button_text','example'));
 % add(p,param_twonumbers('4 param_twonumbers',[1,2]));
 % add(p,param_number('5 param_number',1345));

@@ -75,7 +75,6 @@ classdef rt_dBSPL < rt_measurer
         
         
         function ret=calculate(obj,sig)
-            
             if size(sig,2)>1  % this measurement needs to be done on only one channel
                 sig=sig(:,1);
             end
@@ -103,6 +102,9 @@ classdef rt_dBSPL < rt_measurer
                 r=rms(x);
                 c(i)=20*log10(r/obj.P0);
             end
+            ret.freq=obj.CenterFrequency;
+            ret.fmeas=c;
+            
             %     disp(sprintf('250: %2.2f dB, 500: %2.2f dB, 1K: %2.2f dB, 2K: %2.2f dB, 4K: %2.2f dB',c(1),c(2),c(3),c(4),c(5)));
             measax=obj.measurement_axis;
             if ~isempty(measax)

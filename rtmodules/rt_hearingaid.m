@@ -10,8 +10,7 @@ classdef rt_hearingaid < rt_manipulator
         mycompressors;
         tattack
         trelease
-        maxSig
-        pams;
+        pname;
     end
     
     methods
@@ -20,113 +19,115 @@ classdef rt_hearingaid < rt_manipulator
             obj.fullname='Hearing aid';
             pre_init(obj);  % add the parameter gui
             
+            
+            % first go: check for the frequencies.
+            pars = inputParser;
+            pars.KeepUnmatched=true;
+            addParameter(pars,'CentreFrequencies','250,500,1000,2000,4000');
+            %             comp='-20,2,'; % default compressor settings
+            %             addParameter(pars,'CompressorSettings',[comp,comp,comp,comp,comp]);
+            addParameter(pars,'AttackTime',0.05);
+            addParameter(pars,'ReleaseTime',0.100);
+            parse(pars,varargin{:});
+            add(obj.p,param_generic('CentreFrequencies',pars.Results.CentreFrequencies));
+            add(obj.p,param_float('AttackTime',pars.Results.AttackTime,'unit','sec','unittype',unit_time));
+            add(obj.p,param_float('ReleaseTime',pars.Results.ReleaseTime,'unit','sec','unittype',unit_time));
+            
+            % second go: make all  compressors:
+            freqs=parse_csv(getvalue(obj.p,'CentreFrequencies'));
+            pars2 = inputParser;
+            pars2.KeepUnmatched=true;
+            for i=1:length(freqs)
+                obj.pname{i}=sprintf('band%d_%3.0fHz',i,freqs(i));
+                addParameter(pars,obj.pname{i},[-20,2]); %default value for compressors
+            end
+            parse(pars,varargin{:});
+            for i=1:length(freqs)
+                eval(sprintf('compset=pars.Results.%s;',obj.pname{i}));
+                s=sprintf('pp=param_compressor(''%s'',[%f,%f],''maxamplitude'',[%f,%f]);',obj.pname{i},compset(1),compset(2),obj.MAXVOLUME,obj.MAXVOLUME);
+                eval(s);
+                add(obj.p,pp);
+            end
+            
+            %             add(obj.p,param_audiogram('Audiogram',pars.Results.Audiogram));
+            
+            
             s='Hearing aid module simulates a simple hearing aid consisting of several stages:';
-            s=[s, ' a set of bandpass filters splits the signal into different bands. The number of bands is defined by the parameter "bands"'];
-            s=[s, 'each band has a compressor that reduces the dynamic range and amplifies all sounds below the knee point'];
+            s=[s,'a set of bandpass filters splits the signal into different bands. The number of bands is defined by the parameter "bands"'];
+            s=[s,'each band has a compressor that reduces the dynamic range and amplifies all sounds below the knee point'];
             obj.descriptor=s;
             
         end
         
+        
         function post_init(obj) % called the second times around
             post_init@rt_manipulator(obj);
             
-            obj.nr_bands=5;% Filter Order
-            add(obj.p,param_number('number bands',obj.nr_bands));
-            
-            % default values
-            vcomp=[0 20;55 65; 110 110];
-            
-            obj.tattack=5;
-            obj.trelease=20;
-            obj.maxSig = 110;% an estimate for the maximum decibel value you would ever expect as the input
+            freqs=parse_csv(getvalue(obj.p,'CentreFrequencies'));
+            obj.nr_bands=length(freqs);
             
             N=6; % filter order
             BW = '1 octave';  % one octave filter
-            F0 = 1000;       % Center Frequency (Hz)
-            Fs = obj.parent.SampleRate;      % Sampling Frequency (Hz)
-            oneOctaveFilter = octaveFilter('FilterOrder', N, ...
-                'CenterFrequency', F0, 'Bandwidth', BW, 'SampleRate', Fs);
-            
-            F0 = getANSICenterFrequencies(oneOctaveFilter);
-            F0(F0<250) = [];
-            %             F0(F0>20e3) = [];
-            F0=F0(1:obj.nr_bands);
             for i=1:obj.nr_bands
-                fullOctaveFilterBank{i} = octaveFilter('FilterOrder', N, ...
-                    'CenterFrequency', F0(i), 'Bandwidth', BW, 'SampleRate', Fs);
-            end
-            obj.myoctbandfilter=fullOctaveFilterBank;
-            
-            m='[';
-            for i=1:3
-                m=[m sprintf('%d %d',vcomp(i,1),vcomp(i,2))];
-                if i<3
-                    m=[m ';'];
-                end
-            end
-            m=[m ']'];
-            
-            for i=1:obj.nr_bands
-                name=sprintf('band %d - %3.0fHz',i,F0(i));
-                s=sprintf('obj.pams{%d}=param_mouse_panel(''%s'',%s,''compressor'');',i,name,m);
-                eval(s);
-                add(obj.p,obj.pams{i});
-            end
-            getvalue(obj.p,sprintf('band %d - %3.0fHz',i,F0(i)));
-            
-            
-            add(obj.p,param_number('attack time (sec)',0.05));
-            add(obj.p,param_number('release time (sec)',0.1));
-            
-            for i=1:obj.nr_bands
-                dRC{i} = compressor(-20,2,...
+                obj.myoctbandfilter{i} = octaveFilter('FilterOrder', N,'CenterFrequency', freqs(i), 'Bandwidth', BW, 'SampleRate',  obj.parent.SampleRate);
+                compvals=getvalue(obj.p,obj.pname{i});
+                
+                obj.mycompressors{i} = compressor(compvals(1),compvals(2),...
                     'KneeWidth',0,...
-                    'SampleRate',Fs,...
-                    'MakeUpGainMode','Auto');
+                    'SampleRate',obj.parent.SampleRate,...
+                    'MakeUpGainMode','Property',...
+                    'MakeUpGain',0);
             end
-            %             visualize(dRC);
-            obj.mycompressors=dRC;
             
-            
-            %% if overlap and add, there exist another module that needs to be updated too!!
-            % make sure that the other module doesn't get forgotton:
+            %% if overlap and add, there exist another module that needs to be updated too!!            % make sure that the other module doesn't get forgotton:
             sync_initializations(obj); % in order to catch potential other modules that need to be updated!
             
         end
         
         function out=apply(obj,in)
-            outf=zeros(obj.nr_bands,length(in));
+            outc=zeros(length(in),obj.nr_bands);
+            % calibration: matlab doesn't know about p0, it calculates dB
+            % as xdB=20*log10(abs(in)). Our signals are in dBSPL, so we
+            % need to multiply by log10(p0) and our zero point is the
+            % maximum level (100dB) so we need to add that up
+            %             const=20*log10(obj.P0);
+            const= power(10,obj.MAXVOLUME/20)*obj.P0;
+            in=in/const;
+            
+            tauA=getvalue(obj.p,'AttackTime','sec');
+            tauR=getvalue(obj.p,'ReleaseTime','sec');
             %% ocatve band filtering
             for i=1:obj.nr_bands
-                outf(i,:)= step(obj.myoctbandfilter{i},in);
-            end
-            outc=outf; % memory allocation
-            
-            %% compression
-            [thresh,ratio,tauA,tauR]=getcurrentvals(obj); % get the values from the open GUI
-            
-            for i=1:obj.nr_bands
-                obj.mycompressors{i}.Threshold=thresh(i);
-                obj.mycompressors{i}.Ratio=ratio(i);
+                %             for i=3:3
+                r=getvalue(obj.p,obj.pname{i});
+                obj.mycompressors{i}.Threshold=max(-50,r(1));
+                obj.mycompressors{i}.Ratio=max(1,r(2));
                 obj.mycompressors{i}.AttackTime =tauA;
                 obj.mycompressors{i}.ReleaseTime =tauR;
-%                 obj.mycompressors{i}.MakeUpGainMode ='Property';
-                outc(i,:) = step(obj.mycompressors{i},outf(i,:));
+                obj.mycompressors{i}.MakeUpGain =r(3);
+                %
+                outf= step(obj.myoctbandfilter{i},in);
+                [outc(:,i),g] = step(obj.mycompressors{i},outf);
             end
+            %
+            %             %% sum channels into the right format
+            out=sum(outc')';
+            %             out=outc(:,3);
+            out=out*const;
+            %             visualize(dRC);
             
-            %% sum channels into the right format
-            out=sum(outc);
-            out=out';
+            %             figure(1)
+            %             clf,hold on
+            %             %                         plot(outc);
+            %
+            %             plot(in,'b')
+            %             %             plot(outf,'g')
+            %             plot(out,'r')
+            %             %             plot(g,'c')
+            %             fprintf('in: %3.0fdB - out: %3.1fdB\n',20*log10(rms(in(2:end))),20*log10(rms(out(2:end))));
+            
         end
         
-        function [thresh,ratio,tauA,tauR]=getcurrentvals(obj)
-            for i=1:obj.nr_bands
-                [thresh(i),ratio(i)]=getcompressorvalues(obj.pams{i});
-            end
-            tauA=getvalue(obj.p,'attack time (sec)');
-            tauR=getvalue(obj.p,'release time (sec)');
-        end
-
     end
 end
 
