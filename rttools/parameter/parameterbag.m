@@ -75,15 +75,22 @@ classdef parameterbag < handle
             end
         end
         
-        function b=has_changed(pbag)
-            b=0;
-            k=keys(pbag.items);
-            for i=1:length(k)
-                bb=has_changed(pbag.items(k{i}));
-                if bb
-                    b=1;
-                    return;
+        function b=has_changed(pbag,pstr)
+            if nargin==1 % the whole bag
+                
+                b=0;
+                k=keys(pbag.items);
+                for i=1:length(k)
+                    bb=has_changed(pbag.items(k{i}));
+                    if bb
+                        b=1;
+                        return;
+                    end
                 end
+            elseif nargin==2 % just one entry
+                p=pbag.items(pstr);
+                b=has_changed(p);
+                return;
             end
         end
         

@@ -10,42 +10,51 @@ classdef param_audiogram < parameter
     properties (SetAccess = protected)
         mypolyline;
         myaxes;
-        my_frequencies;  %frequencies 
+        my_frequencies;  %frequencies
     end
     
     methods (Access = public)
         
         function param=param_audiogram(text,vals,varargin)
             param@parameter(text,vals,varargin{:});
-            param.value=vals;            
-                
-             pars = inputParser;
+            param.value=vals;
+            
+            pars = inputParser;
             pars.KeepUnmatched=true;
-            addParameter(pars,'frequencies',[250,500,1000,2000,4000,6000]);
+            addParameter(pars,'frequencies',[250,500,1000,2000,4000]);
             parse(pars,varargin{:});
-           
-            param.my_frequencies=pars.Results.frequencies;           
+            
+            param.my_frequencies=pars.Results.frequencies;
             
             
         end
         
         function size=get_draw_size(param,panel)
-            size(1)=400;
-            size(2)=250+1*param.unit_scaley;
+            size(1)=300;
+            size(2)=200+param.unit_scaley;
         end
         
         function vv=getvalue(param)  % get the value of this param
-            if isempty(param.mypolyline)
-                vv=param.value;
-            else
-                vv=get(param.mypolyline,'Position');
-                param.value=vv;
+            if ishandle(param.mypolyline)
+                v=get(param.mypolyline,'Position');
+                for i=1:length(v)
+                    param.value(i)=v(i,2);
+                end
             end
+            vv=param.value;
         end
         
         function setvalue(param,vv)  % get the value of this param
             param.value=vv;
-            set(param.mypolyline,'Position',vv);
+            if ishandle(param.mypolyline)
+                %             param.mypolyline = drawpolyline(up,'Position',[x;y]');
+                %             clickCallback=@(src,event)roi_callback_function(param);
+                %             l = addlistener(param.mypolyline,'ROIMoved',clickCallback);
+                vvv(:,1)=1:length(param.my_frequencies);
+                vvv(:,2)=vv;
+                set(param.mypolyline,'Position',vvv);
+            end
+            param.is_changed=1;
         end
         
         function draw(param,panel,x,y)
@@ -54,9 +63,11 @@ classdef param_audiogram < parameter
             size=get_draw_size(param,panel);
             [elem1,elem2]=getelementpositions(param,panel,x,y);
             
-            up=axes(panel,'units','pixel','position',[elem1.x elem1.y size(1) size(2)-50]);
+            up=axes(panel,'units','pixel','position',[elem1.x elem1.y+10 size(1) size(2)-50]);
+            cla(up);
+            hold(up,'on');
+            grid(up,'on');
             
-            vv=getvalue(param);
             f=param.my_frequencies;
             
             set(up,'xlim',[0.5 length(f)+0.5]);
@@ -80,28 +91,13 @@ classdef param_audiogram < parameter
         end
         
         %% callback is called when any of the points is moved.
-        % we are going to use it to iplement it only (for now) a
-        % compressor/
         function roi_callback_function(param,evt)
-            % adjust all points according to the requirements:
-            % fix the x-values
-            up=param.myaxes;
-            f=param.my_frequencies;
-            %             cla(up,'reset');
-            %             hold(up,'off')
-            
-            vv=getvalue(param);
-            vv(:,1)=1:length(f);
-            %             param.mypolyline = drawpolyline(up,'Position',[x;y]');
-            %             clickCallback=@(src,event)roi_callback_function(param);
-            %             l = addlistener(param.mypolyline,'ROIMoved',clickCallback);
-            set(param.mypolyline,'Position',vv);
-            for i=1:length(f)
-                text(up,i,vv(i,2)+10,sprintf('%2.0f',vv(i,2)));
-            end
+            % just read the y-values and redraw the values
+            v=get(param.mypolyline,'Position');
+            setvalue(param,v(:,2));
         end
         
-
+        
         
         
         function s=get_value_string(param)  % return the pair 'name', value, as needed for disp
@@ -114,9 +110,9 @@ classdef param_audiogram < parameter
             end
             mlist=[mlist,']'];
             s = sprintf('''%s'',%s',param.text,mlist);
-
+            
         end
-       
+        
     end
 end
 
