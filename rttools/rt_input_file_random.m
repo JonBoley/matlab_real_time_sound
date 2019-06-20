@@ -14,7 +14,7 @@ classdef rt_input_file_random < rt_input
         file_length;
     end
     
-%   Copyright 2019 Stefan Bleeck, University of Southampton
+    %   Copyright 2019 Stefan Bleeck, University of Southampton
     methods
         function obj=rt_input_file_random(parent,varargin) %% called the very first time around
             obj@rt_input(parent,varargin{:});  % superclass contructor
@@ -22,13 +22,14 @@ classdef rt_input_file_random < rt_input
             
             pre_init(obj);  % add the parameter gui
             obj.input_source_type='file';
-%             obj.show=1;  % show me as selectable to the user
             
             pars = inputParser;
             pars.KeepUnmatched=true;
             addParameter(pars,'foldername','.');
+            addParameter(pars,'MaxFileLeveldB',80);  % how loud we assume the file to be when fully loud
             parse(pars,varargin{:});
             add(obj.p,param_foldername('foldername',pars.Results.foldername));
+            add(obj.p,param_number('MaxFileLeveldB',pars.Results.MaxFileLeveldB));
             
         end
         
@@ -50,7 +51,7 @@ classdef rt_input_file_random < rt_input
             
             rn=randperm(length(obj.allfilenames));
             obj.filename=obj.allfilenames{rn(randi(length(rn)))};
-            ai=audioinfo(obj.filename);  
+            ai=audioinfo(obj.filename);
             obj.file_length=ai.Duration;
             obj.fileFs=ai.SampleRate;
             
@@ -65,7 +66,7 @@ classdef rt_input_file_random < rt_input
         function sig=read_next(obj)
             [sig,eof] = obj.recorder();
             sig=resample(sig,obj.parent.SampleRate,obj.fileFs); % ressample to wanted SR
-            sig=input_calibrate(obj,sig);
+            sig=calibrate_in(obj,sig);
             
             if eof  % load the next one
                 close(obj)
@@ -82,5 +83,16 @@ classdef rt_input_file_random < rt_input
                 release(obj.recorder);
             end
         end
+        
+        function sig=calibrate_in(obj,sig)
+            maxdb=getvalue(obj.p,'MaxFileLeveldB');
+            maxamp=obj.P0*power(10,maxdb/20);
+            calib=20*log10(maxamp/1); % how many more dB because of pascale
+            
+            fac=power(10,(calib+obj.parent.input_gain)/20);
+            sig=sig.*fac;
+        end
+        
+        
     end
 end

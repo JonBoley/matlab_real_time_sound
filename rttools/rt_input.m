@@ -54,11 +54,13 @@ classdef rt_input < rt_module
             disp('rt_input: problem: sample rates cannot match requested frame length');
         end
         
-        function sig=input_calibrate(obj,sig)
-            [ingain,incalib]=get_input_calib(obj.parent,obj);
-            
-            fac=power(10,(ingain+incalib)/20);
-            sig=sig.*fac;
+        % null function for calibration. Should be overwritten
+        function sig=calibrate_in(obj,sig)
+            sig=sig;
+%             [ingain,incalib]=get_input_calib(obj.parent,obj);
+%             
+%             fac=power(10,(ingain+incalib)/20);
+%             sig=sig.*fac;
         end
     end
     

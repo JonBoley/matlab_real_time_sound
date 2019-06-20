@@ -6,7 +6,6 @@
 % class that deals with rt modules. rt processes can do all that modules
 % can, but also for n channels and overlap and add/
 
-%   Copyright 2019 Stefan Bleeck, University of Southampton
 classdef rtprocess_input < rtprocess
     properties
         
@@ -16,7 +15,6 @@ classdef rtprocess_input < rtprocess
         %% called the first time around to create a process from a modules
         function obj=rtprocess_input(parent,mod)
             obj@rtprocess(parent,mod);
-            % a process can only be one of the following
             obj.is_input=1;
             
         end
@@ -25,7 +23,6 @@ classdef rtprocess_input < rtprocess
             
             sig=read_next(obj.basic_module);
             channels=obj.parent.Channels; % how many chanels do we need?
-            %                 for i=1:channels
             
             nr_col=size(sig,2);  % how many columns did we read in?
             switch channels
@@ -41,7 +38,7 @@ classdef rtprocess_input < rtprocess
                     end
             end
             obj.parent.current_stim=sig;  % return the clean stimulus
-
+            
         end
     end
 end

@@ -23,12 +23,12 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
         player; % each model can only have one open SoundSource and drain. Therefore make sure it's central!
         recorder;
         
-        % calibration properties
-        calibration_gain_mic=-12;  % these values are on my personal machine, might be different on different computers
-        gain_correct_speaker=3;
+%         % calibration properties
+%         calibration_gain_mic=-12;  % these values are on my personal machine, might be different on different computers
+%         gain_correct_speaker=3;
         input_gain=0;
         output_gain=0;
-        max_file_level=80; % we assume that a wav file of max rms has this dB SPL
+%         max_file_level=80; % we assume that a wav file of max rms has this dB SPL
         
         % properties that are neccesary for script processing (not live)
         % htis is where hte results are stored:
@@ -234,39 +234,39 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
                 end
             end
         end
+%         
+%         function set_calibrations(model,value,ingain,outgain)
+%             model.calibration_gain_mic=value;
+%             model.input_gain=ingain;
+%             model.output_gain=outgain;
+%         end
         
-        function set_calibrations(model,value,ingain,outgain)
-            model.calibration_gain_mic=value;
-            model.input_gain=ingain;
-            model.output_gain=outgain;
-        end
+%         function [gain,calib]=get_input_calib(model,module)
+%             % % %             % calibrate to the right level: all signal amplitudes are
+%             % % %             % reported in Pascal
+%             switch module.input_source_type
+%                 case {'file'}
+%                     maxdb=module.MAXVOLUME;
+%                     maxamp=module.P0*power(10,maxdb/20);
+%                     calib=20*log10(maxamp/1); % how many more dB because of pascale
+%                 case {'oscillator'}
+%                     maxdb=module.MAXVOLUME-3;
+%                     maxamp=module.P0*power(10,maxdb/20);
+%                     calib=20*log10(maxamp/1); % how many more dB because of pascale
+%                 case {'mic','mic_speaker'}
+%                     calib=model.calibration_gain_mic;
+%             end
+%             gain=model.input_gain; % simple dB added
+%         end
         
-        function [gain,calib]=get_input_calib(model,module)
-            % % %             % calibrate to the right level: all signal amplitudes are
-            % % %             % reported in Pascal
-            switch module.input_source_type
-                case {'file'}
-                    maxdb=module.MAXVOLUME;
-                    maxamp=module.P0*power(10,maxdb/20);
-                    calib=20*log10(maxamp/1); % how many more dB because of pascale
-                case {'oscillator'}
-                    maxdb=module.MAXVOLUME-3;
-                    maxamp=module.P0*power(10,maxdb/20);
-                    calib=20*log10(maxamp/1); % how many more dB because of pascale
-                case {'mic','mic_speaker'}
-                    calib=model.calibration_gain_mic;
-            end
-            gain=model.input_gain; % simple dB added
-        end
-        
-        function [gain,calib]=get_output_calib(model,module)
-            % calibrate to the right level: all signal amplitudes are reported in Pascal
-            switch module.output_drain_type
-                case {'speaker','mic_speaker'}
-                    calib=model.calibration_gain_mic;
-            end
-            gain=model.output_gain; % simple dB added
-        end
+%         function [gain,calib]=get_output_calib(model,module)
+%             % calibrate to the right level: all signal amplitudes are reported in Pascal
+%             switch module.output_drain_type
+%                 case {'speaker','mic_speaker'}
+%                     calib=model.calibration_gain_mic;
+%             end
+%             gain=model.output_gain; % simple dB added
+%         end
         
         % put up a gui for this specific model and add all the requied viz panels
         function myfigurehand=gui(model,parent)

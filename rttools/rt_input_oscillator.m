@@ -143,7 +143,7 @@ classdef rt_input_oscillator < rt_input
                 otherwise
                     sig=obj.osc();
             end
-            sig=input_calibrate(obj,sig);
+            sig=calibrate_inp(obj,sig);
         end
         
         function s=gendamped(obj)  % generates damped sinusoids with exponential decay
@@ -247,6 +247,14 @@ classdef rt_input_oscillator < rt_input
             tt=3*time_const2;%calibration
             maxv=power(tt,3)*exp(-(tt)/time_const2);
             s=x'.*env/maxv;
+        end
+        
+        function sig=calibrate_inp(obj,sig)
+            maxamp=obj.P0*power(10,obj.MAXVOLUME/20);
+            calib=20*log10(maxamp/1); % how many more dB because of pascale
+%             calib=calib-40; % to get it in the right ballpark
+            fac=power(10,(calib+obj.parent.input_gain)/20);
+            sig=sig.*fac;
         end
         
     end

@@ -47,7 +47,7 @@ classdef rt_full_gui <handle
             obj.mymodel=rt_model;  % start the main model with default parameter
             obj.mymodel.parent=obj;  % set myself as the parent
             obj.p=obj.mymodel.p; % drastic: copy over all main model parameter
-            add(obj.p,param_button('press to calibrate','button_text','button...','button_callback_function','calibrate(param.parent.parent.parent);'));
+%             add(obj.p,param_button('press to calibrate','button_text','button...','button_callback_function','calibrate(param.parent.parent.parent);'));
             
             obj.modules=containers.Map;
             for i=1:3
@@ -87,7 +87,7 @@ classdef rt_full_gui <handle
             setvalue(obj.p,'SoundTarget','speaker output: Default');
             setvalue(obj.p,'PlaySound',0);
             
-            set_calibrations(obj.mymodel,obj.mymodel.calibration_gain_mic,obj.mymodel.input_gain,obj.mymodel.output_gain);
+%             set_calibrations(obj.mymodel,obj.mymodel.calibration_gain_mic,obj.mymodel.input_gain,obj.mymodel.output_gain);
             
             fullgui_post_init(obj,'input');
             fullgui_post_init(obj,'noise');
@@ -122,7 +122,7 @@ classdef rt_full_gui <handle
             for i=1:length(devices)
                 n=n+1;
                 sources{n}=devices{i};
-                o=rt_input_mic(obj,'system_input_type',sources{n});
+                o=rt_input_microphone(obj,'system_input_type',sources{n});
                 sources{n}=o.fullname; % name has changed
                 obj.modules(o.fullname)=o;
             end
@@ -152,7 +152,11 @@ classdef rt_full_gui <handle
                 targets{n}=o.fullname; % name has changed
                 obj.modules(o.fullname)=o;
             end
-            add(obj.p,param_popupmenu('SoundTarget',targets{end},'list',targets));
+            pp=param_popupmenu_with_button('SoundTarget',targets{end},'list',targets,...
+                'button_text','properties',...
+                'button_callback_function','change_param(param.button_target,''output'');','button_target',obj);
+
+            add(obj.p,pp);
             add(obj.p,param_checkbox('PlaySound',0));
         end
         
@@ -266,7 +270,7 @@ classdef rt_full_gui <handle
                     v=obj.modules(getvalue(obj.p,'SoundSource'));
                     change_parameter(v);
                 case 'output'
-                    v=obj.modules(getvalue(obj.p,'SoundSource'));
+                    v=obj.modules(getvalue(obj.p,'SoundTarget'));
                     change_parameter(v);
                 case 'vizualization'
                     v=obj.modules(getvalue(obj.p,'Visualizations'));
@@ -472,28 +476,28 @@ classdef rt_full_gui <handle
             obj.tlast=t;
         end
         
-        function calibrate(obj)
-            
-            %             obj.calibfres = ([250, 500, 1000, 2000, 4000]);% octave band center frequencies
-            % this is the loudness that a signal need to be boosted to achieve the
-            % same reading as a pure tone 1 meter away from the artifical head
-            % (done by Stefan 12.9.2018)
-            %             obj.in_calibdB=[70 82.5 81.5 78 74 ];
-            
-            
-            
-            pp=parameterbag('calibration properties');
-            add(obj.p,param_button('finished?','button_text','done  ','button_callback_function','close_gui(param.parent);'));
-            %             add(obj.p,param_button('for more info:','button_text','show description','button_callback_function','show_description(param.button_target)','button_target',obj));
-            
-            add(pp,param_float('microphone §ration correction (gain)',obj.mymodel.calibration_gain_mic,'unittype',unit_mod,'unit','dB'));
-            add(pp,param_float('speaker calibration correction (gain)',obj.mymodel.gain_correct_speaker,'unittype',unit_mod,'unit','dB'));
-            add(pp,param_float('assume file has maximum overall level (SPL)',obj.mymodel.max_file_level,'unittype',unit_mod,'unit','dB'));
-            gui(pp,'modal');
-            obj.mymodel.calibration_gain_mic=getvalue(pp,'microphone calibration correction (gain)','dB');
-            obj.mymodel.gain_correct_speaker=getvalue(pp,'speaker calibration correction (gain)','dB');
-            obj.mymodel.max_file_level=getvalue(pp,'assume file has maximum overall level (SPL)','dB');
-        end
+%         function calibrate(obj)
+%             
+%             %             obj.calibfres = ([250, 500, 1000, 2000, 4000]);% octave band center frequencies
+%             % this is the loudness that a signal need to be boosted to achieve the
+%             % same reading as a pure tone 1 meter away from the artifical head
+%             % (done by Stefan 12.9.2018)
+%             %             obj.in_calibdB=[70 82.5 81.5 78 74 ];
+%             
+%             
+%             
+%             pp=parameterbag('calibration properties');
+%             add(obj.p,param_button('finished?','button_text','done  ','button_callback_function','close_gui(param.parent);'));
+%             %             add(obj.p,param_button('for more info:','button_text','show description','button_callback_function','show_description(param.button_target)','button_target',obj));
+%             
+%             add(pp,param_float('microphone calibration correction (gain)',obj.mymodel.calibration_gain_mic,'unittype',unit_mod,'unit','dB'));
+%             add(pp,param_float('speaker calibration correction (gain)',obj.mymodel.gain_correct_speaker,'unittype',unit_mod,'unit','dB'));
+%             add(pp,param_float('assume file has maximum overall level (SPL)',obj.mymodel.max_file_level,'unittype',unit_mod,'unit','dB'));
+%             gui(pp,'modal');
+%             obj.mymodel.calibration_gain_mic=getvalue(pp,'microphone calibration correction (gain)','dB');
+%             obj.mymodel.gain_correct_speaker=getvalue(pp,'speaker calibration correction (gain)','dB');
+%             obj.mymodel.max_file_level=getvalue(pp,'assume file has maximum overall level (SPL)','dB');
+%         end
         
         function run(obj)            
             if getvalue(obj.p,'IsRunning')==0
