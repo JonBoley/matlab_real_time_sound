@@ -22,7 +22,7 @@ for i=1:length(allfiles)
     if contains(ll,'.m') && ~contains(ll,'~')
         %         i
         name=ll(1:end-2);
-        fprintf('%d: starting %s',i,name);
+        fprintf('%d: starting %s ... ',i,name);
         str=sprintf('o=%s(obj);',name);
         eval(str);
         ud=cd(base_d);
@@ -32,10 +32,10 @@ for i=1:length(allfiles)
             r{c}=rr;
         end
         base_d=cd(ud);
-        fprintf(' finished\n');
-
-% clear all
-close all force
+        fprintf(' ...finished\n');
+        
+        % clear all
+        close all force
     end
 end
 cd(base_d);
@@ -50,6 +50,12 @@ for i=1:length(r)
     end
 end
 
+% now add the benchmark info too:
+a=bench(5);
+a=mean(a,1);
+
+c=c+1;
+r{c}=
 save_excel(rnn,'fullinfo.csv');
 
 function res=runo(mod)
@@ -75,9 +81,11 @@ initialize(mymodel);
 tic
 run_once(mymodel);
 
+
+res=resempty;
 res.filename=mod.modname;
 res.manipulator=mod.is_manipulation;
-res.visuzlizer=mod.is_visualization;
+res.visualizer=mod.is_visualization;
 res.measurement=mod.is_measurement;
 res.input=mod.is_input;
 res.output=mod.is_output;
@@ -89,4 +97,20 @@ res.fullname=mod.fullname;
 res.speed=2/toc*100;
 res.description=mod.descriptor;
 
+end
+
+
+function res=resempty
+res.filename='';
+res.manipulator='';
+res.visualizer='';
+res.measurement='';
+res.input='';
+res.output='';
+res.requires_noise='';
+res.requires_nr_channels='';
+res.requires_overlap_add='';
+res.fullname='';
+res.speed='';
+res.description='';
 end

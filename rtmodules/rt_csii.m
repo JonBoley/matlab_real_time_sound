@@ -51,7 +51,7 @@ classdef rt_csii < rt_measurer
             clean=obj.parent.clean_stim;
             if isempty(obj.parent.clean_stim) % forgot to switch on noise!
                 clean=sig;
-                disp('CSII needs noise switched on! Taking given stimulus as clean stimulus, result will be close to 1')
+                disp('CSII needs noise switched on! Taking given stimulus as clean stimulus, result will be close to 1\n')
             end
             
             

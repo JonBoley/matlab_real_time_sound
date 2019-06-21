@@ -88,7 +88,6 @@ classdef rt_input_file_random < rt_input
             maxdb=getvalue(obj.p,'MaxFileLeveldB');
             maxamp=obj.P0*power(10,maxdb/20);
             calib=20*log10(maxamp/1); % how many more dB because of pascale
-            
             fac=power(10,(calib+obj.parent.input_gain)/20);
             sig=sig.*fac;
         end

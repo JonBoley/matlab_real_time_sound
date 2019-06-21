@@ -166,6 +166,14 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
             % and add to the cascade
             nr=length(model.processes);
             model.processes{nr+1}=opr;
+            
+            
+            % check manually if this is the add-noise module, because if it
+            % is, we neeed to register:
+            
+            if module.is_add_noise
+                model.add_noise_process=opr;
+            end
         end
         
         function setPlotWidth(model,t)

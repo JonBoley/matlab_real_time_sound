@@ -22,13 +22,15 @@ classdef rt_bmm < rt_visualizer
             addParameter(pars,'numberChannels',50);
             addParameter(pars,'lowest_frequency',100);
             addParameter(pars,'highest_frequency',6000);
+            addParameter(pars,'autoscale',0);
             addParameter(pars,'zoom',1);
             parse(pars,varargin{:});
             
             add(obj.p,param_number('numberChannels',pars.Results.numberChannels));
             add(obj.p,param_number('lowest_frequency',pars.Results.lowest_frequency));
             add(obj.p,param_number('highest_frequency',pars.Results.highest_frequency));
-            add(obj.p,param_float_slider('zoom ',pars.Results.zoom,'minvalue',1,'maxvalue',100,'scale','log'));
+            add(obj.p,param_checkbox('autoscale',pars.Results.autoscale));
+            add(obj.p,param_float_slider('zoom',pars.Results.zoom,'minvalue',1,'maxvalue',100,'scale','log'));
             
             s='the basilar membrane simulator simulates how the BM moves in response to sound';
             s=[s,'gammatoneFilterBank decomposes a signal by passing it through a bank of gammatone filters equally spaced on the ERB scale. '];
@@ -38,7 +40,7 @@ classdef rt_bmm < rt_visualizer
             s=[s,'[1] Slaney, Malcolm. "An Efficient Implementation of the Patterson-Holdworth Auditory Filter Bank." Apple Computer Technical Report 35, 1993.'];
             s=[s,'[2] Patterson, R.d., K. Robinson, J. Holdsworth, D. Mckeown, C. Zhang, and M. Allerhand. "Complex Sounds and Auditory Images." Auditory Physiology and Perception. 1992, pp. 429?446.'];
             obj.descriptor=s;
-        
+            
         end
         
         function post_init(obj) % called the second times around
@@ -51,10 +53,9 @@ classdef rt_bmm < rt_visualizer
             
             
             sample_rate=obj.parent.SampleRate;
-            frame_length=obj.parent.FrameLength;
             
             obj.fbank=gammatoneFilterBank([lowfre highfre],num_channels,sample_rate);
-           
+            
             obj.viz_buffer=circbuf(round(obj.parent.PlotWidth*obj.parent.SampleRate),num_channels);
             
             imagesc(get(obj.viz_buffer)','parent',ax);
@@ -95,8 +96,8 @@ classdef rt_bmm < rt_visualizer
             
             set(ax,'xticklabel',obj.xlab)
             set(ax,'yticklabel',obj.ylab)
-
-
+            
+            
         end
         
         function plot(obj,sig)
@@ -118,14 +119,19 @@ classdef rt_bmm < rt_visualizer
             specbuf=push(specbuf,bmm);
             
             vals=get(specbuf)';
-            z=getvalue(obj.p,'zoom ');
-            random_calibrtion_value=100;
-            vals=vals.*random_calibrtion_value;
-            vals=vals.*z;
-            vals=vals+50;
-        
-            image(vals,'parent',ax);
+            z=getvalue(obj.p,'zoom');
+            if getvalue(obj.p,'autoscale')
+                v1=min(min(vals));
+                v2=max(max(vals));
+%                 vals=vals/(v2-v1)));
+                imagesc(vals*100/(v2-v1),'parent',ax);
+            else
+                random_calibrtion_value=100;
+                vals=vals.*random_calibrtion_value;
+                vals=vals.*z;
+                vals=vals+50;
+                image(vals,'parent',ax);
+            end
         end
-        
     end
 end

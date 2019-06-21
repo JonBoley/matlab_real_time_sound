@@ -176,7 +176,7 @@ classdef rt_full_gui <handle
             % noise is special and must be added out of sync here. It will
             % never change (always the same base module) and we want to
             % mirror it's parameter here
-            obj.mymodel.add_noise_process=add_module(obj.mymodel,o,'input'); %
+            add_module(obj.mymodel,o,'input'); %
             
             add(obj.p,param_popupmenu('Noise',alln{1},'list',alln));
             add(obj.p,param_checkbox('AddNoise',0));

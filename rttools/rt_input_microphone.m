@@ -14,8 +14,8 @@ classdef rt_input_microphone < rt_input
             
             pars = inputParser;
             pars.KeepUnmatched=true;
-            addParameter(pars,'Calibrate',0);
-            addParameter(pars,'Gains','0,0,0,0,0,0,0,0,0,0');
+            addParameter(pars,'Calibrate',1);
+            addParameter(pars,'CalibrationFile','zerocalibration.m');
             addParameter(pars,'system_input_type','Default');
             parse(pars,varargin{:});
             obj.fullname=sprintf('microphone input: %s',pars.Results.system_input_type);
@@ -23,8 +23,9 @@ classdef rt_input_microphone < rt_input
             pre_init(obj);  % add the parameter gui
             add(obj.p,param_checkbox('Calibrate',pars.Results.Calibrate));
             add(obj.p,param_generic('system_output_type',pars.Results.system_input_type));
-            add(obj.p,param_generic('Gains',pars.Results.Gains));
-            
+%             add(obj.p,param_generic('Gains',pars.Results.Gains));
+                        add(obj.p,param_filename('CalibrationFile',pars.Results.CalibrationFile));
+
             obj.input_source_type='mic'; % I am a microphone
             
         end
@@ -44,14 +45,19 @@ classdef rt_input_microphone < rt_input
             
             cal=getvalue(obj.p,'Calibrate');
             if cal
-                gains=parse_csv(getvalue(obj.p,'Gains'));
-                
+                      % load calibration file
+                cf=getvalue(obj.p,'CalibrationFile');
+                run(cf); % this loads a structure called 'calib'
+                gains=calib.gains;
+                bw=calib.bandwith;
+%        
                 obj.my_in_equalizer = graphicEQ('SampleRate',obj.parent.SampleRate,...
                     'EQOrder',2,...
                     'Structure','Cascade',...
-                    'Bandwidth','1 octave',...
+                    'Bandwidth',bw',...
                     'Gains',gains);
             end
+             set_changed_status(obj.p,0);
         end
         
         function sig=read_next(obj)

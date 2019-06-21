@@ -34,20 +34,27 @@ classdef caim_nap
         end
         
         function obj=step(obj,inp)
-            meps=2.2204e-16; % for generic compatilility. This is what i have on my mac with the corrent installation
-            %inp=abs(inp);   % abs takes all values into account, positive and negative. More information, but less physiological 
+            % logic for calibration: a 0dB sound will produce a zero value
+            % (and all quieter ones too). A 100 dB sound will give the full
+            % range of 1
+            
+            %             my_eps=2.2204e-16; % for generic compatilility. This is what i have on my mac with the corrent installation
+            P0=2*1E-5;     % reference sound pressure level
+            
+            %inp=abs(inp);   % abs takes all values into account, positive and negative. More information, but less physiological
             pinp=inp;
-            pinp(inp<meps)=meps; % half wave rectification is more physiological
-%             inp=inp.*power(2,15);
+            pinp(inp<P0)=P0; % half wave rectification is more physiological
             linp = log(pinp); % log compression
-            linp=linp-log(meps); % now the lowest point is always 0 
-%             
+            linp=linp-log(P0); % now the lowest point is always 0
+            linp=linp./abs(log(P0));
+            
             for ch=1:obj.parent.num_channels
                 [outc,obj.zi(ch,:)]=filter(obj.coeff,1,linp(ch,:),obj.zi(ch,:));
                 obj.buffer(ch,:)=outc;
             end
             
-%             obj.buffer=linp;  % no low pass filtering
+            
+            %             obj.buffer=linp;  % no low pass filtering
             
         end
     end

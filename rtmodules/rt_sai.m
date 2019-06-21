@@ -95,7 +95,7 @@ classdef rt_sai < rt_visualizer & rt_measurer
                     xt=get(vax,'xtick');
                     xtt=xt/getlength(obj.buffer)*obj.parent.PlotWidth;
                     for i=1:length(xt)
-                        obj.xlab{i}=sprintf('%2.1f',xtt(i));
+                        obj.xlab{i}=sprintf('%2.1f',xtt(i)*1000);
                     end
                     set(vax,'xticklabel',obj.xlab);
                     % create an interesting color map: from white to black
@@ -158,9 +158,7 @@ classdef rt_sai < rt_visualizer & rt_measurer
             
             if getvalue(obj.p,'numberChannels')>1
                 z=getvalue(obj.p,'zoom');
-                random_calibration_value=1/10;
-                sai=sai.*random_calibration_value;
-                sai=sai.*z;
+                sai=sai.*z*40;
                 image(sai,'parent',vax);
                 view(vax,0,270);
             else

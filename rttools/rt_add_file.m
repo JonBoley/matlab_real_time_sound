@@ -28,7 +28,7 @@ classdef rt_add_file < rt_input
             add(obj.p,param_foldername('foldername',pars.Results.foldername));
             add(obj.p,param_float_slider('attenuation',pars.Results.attenuation,'minvalue',-20,'maxvalue',30,'unittype',unit_mod,'unit','dB'));
             obj.input_source_type='file';
-
+            obj.is_add_noise=1;
         end
         
         function post_init(obj) % called the second times around
@@ -49,7 +49,7 @@ classdef rt_add_file < rt_input
             
             nsig = obj.recorder();
             nsig=resample(nsig,obj.parent.SampleRate,obj.fileFs); % ressample to wanted SR
-            nsig=input_calibrate(obj,nsig);
+            nsig=calibrate_in(obj,nsig);
             
             %             nsig=read_next@rtinput_file(obj); % use parent fct for reading
             atten=getvalue(obj.p,'attenuation');

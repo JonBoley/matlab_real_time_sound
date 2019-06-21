@@ -109,14 +109,12 @@ classdef rt_nap < rt_visualizer
             ax=obj.viz_axes;
             [~,nap]=step(obj.aimmodel,sig);
             push(obj.nap_buffer,nap');
-            vals=get(obj.nap_buffer)';
+            vals=get(obj.nap_buffer)'; % vals come with values between 0 and 1
+            vals=vals.*128;
             z=getvalue(obj.p,'zoom ');
-            random_calibrtion_value=2;
-            vals=vals.*random_calibrtion_value;
             vals=vals.*z;
             image(vals,'parent',ax);
-            
-
+%    max(max(vals))
         end
      
     end

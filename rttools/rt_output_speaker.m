@@ -16,14 +16,18 @@ classdef rt_output_speaker < rt_output
             pars.KeepUnmatched=true;
             addParameter(pars,'system_output_type','Default');
             addParameter(pars,'Calibrate',1);
-            addParameter(pars,'Gains','20,10,2,3.3,-19.2,-19.7,-21.3,-13.6,-4.6,10');  % values recorded by SBleeck 20.6.2019 for AKG K271 Headphones
-            
+            addParameter(pars,'CalibrationFile','HeadphonesAKGK271.m');
+%             %             addParameter(pars,'Gains','20,10,2,3.3,-19.2,-19.7,-21.3,-13.6,-4.6,10');  % values recorded by SBleeck 20.6.2019 for AKG K271 Headphones
+%             % pref frequencies (1 oct):    31.5 63 125 250 500 1000 2000 4000 8000 16000
+%             % pref frequencies (2/3 oct):  25   40  63 100 160  250  400  630 1000  1600  2500  4000  6300  10000 16000
+%             addParameter(pars,'Gains','    20,  17,  3,  2,  6,  -4, -19, -21, -20,  -21,  -17,  -11,   -5,     7,    9');
             parse(pars,varargin{:});
             obj.fullname=sprintf('speaker output: %s',pars.Results.system_output_type);
             pre_init(obj);  % add the parameter gui
             add(obj.p,param_checkbox('Calibrate',pars.Results.Calibrate));
             add(obj.p,param_generic('system_output_type',pars.Results.system_output_type));
-            add(obj.p,param_generic('Gains',pars.Results.Gains));
+%             add(obj.p,param_generic('Gains',pars.Results.Gains));
+            add(obj.p,param_filename('CalibrationFile',pars.Results.CalibrationFile));
             
             obj.output_drain_type='speaker'; % I am a speaker (or headphone)
         end
@@ -37,18 +41,30 @@ classdef rt_output_speaker < rt_output
             obj.parent.player =  audioDeviceWriter('SampleRate',obj.parent.SampleRate,'Device',target);
             setup(obj.parent.player,zeros(obj.parent.FrameLength,obj.parent.Channels));
             
-            
             cal=getvalue(obj.p,'Calibrate');
             if cal
-                gains=parse_csv(getvalue(obj.p,'Gains'));
+                % load calibration file
+                cf=getvalue(obj.p,'CalibrationFile');
+                run(cf); % this loads a structure called 'calib'
+                gains=calib.gains;
                 
+                nr=length(gains);
+                switch nr
+                    case 10
+                        bw= '1 octave';
+                    case 15
+                        bw= '2/3 octave';
+                    case 30
+                        bw= '1/3 octave';
+                end
+                                
                 obj.my_out_equalizer = graphicEQ('SampleRate',obj.parent.SampleRate,...
                     'EQOrder',2,...
                     'Structure','Cascade',...
-                    'Bandwidth','1 octave',...
+                    'Bandwidth',bw,...
                     'Gains',gains);
             end
-            
+             set_changed_status(obj.p,0);
         end
         
         function write_next(obj,sig)
