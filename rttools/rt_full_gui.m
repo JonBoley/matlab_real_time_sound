@@ -1,11 +1,8 @@
 %   Copyright 2019 Stefan Bleeck, University of Southampton
 %   Author: Stefan Bleeck (bleeck@gmail.com)
 
-%   Copyright 2019 Stefan Bleeck, University of Southampton
-%   Author: Stefan Bleeck (bleeck@gmail.com)
 
-
-classdef rt_full_gui <handle
+classdef rt_full_gui <handle%#Lklklk11
     properties
         
         all_manipulations=[];  % bag to store links to the maniplations in one place (it's easier)
