@@ -17,16 +17,11 @@ classdef rt_output_speaker < rt_output
             addParameter(pars,'system_output_type','Default');
             addParameter(pars,'Calibrate',1);
             addParameter(pars,'CalibrationFile','HeadphonesAKGK271.m');
-%             %             addParameter(pars,'Gains','20,10,2,3.3,-19.2,-19.7,-21.3,-13.6,-4.6,10');  % values recorded by SBleeck 20.6.2019 for AKG K271 Headphones
-%             % pref frequencies (1 oct):    31.5 63 125 250 500 1000 2000 4000 8000 16000
-%             % pref frequencies (2/3 oct):  25   40  63 100 160  250  400  630 1000  1600  2500  4000  6300  10000 16000
-%             addParameter(pars,'Gains','    20,  17,  3,  2,  6,  -4, -19, -21, -20,  -21,  -17,  -11,   -5,     7,    9');
             parse(pars,varargin{:});
             obj.fullname=sprintf('speaker output: %s',pars.Results.system_output_type);
             pre_init(obj);  % add the parameter gui
             add(obj.p,param_checkbox('Calibrate',pars.Results.Calibrate));
             add(obj.p,param_generic('system_output_type',pars.Results.system_output_type));
-%             add(obj.p,param_generic('Gains',pars.Results.Gains));
             add(obj.p,param_filename('CalibrationFile',pars.Results.CalibrationFile));
             
             obj.output_drain_type='speaker'; % I am a speaker (or headphone)

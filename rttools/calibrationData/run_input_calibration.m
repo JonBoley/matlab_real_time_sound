@@ -49,11 +49,3 @@ add(pp,param_generic('filename','calib_file.m'));
 
 gui(pp);
 
-
-
-function freq_callback_fct(obj)
-
-end
-
-
-
