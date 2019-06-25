@@ -1,4 +1,30 @@
 # matlab_real_time_sound
+
+20 things you can do with this platform:
+Listen to fully calibrated recordings (Internally all units are physical in Pascal, every signal is automatically calibrated using ⅓ octave filter)
+Create and use a code repository for scientific auditory research - making it possible to reference specific software versions of otherwise undocumented, but frequently used matlab software.
+Use any input or output device on your computer: all are recognised automatically
+Change sample rate, frame length and all other parameters dynamically within the program
+Fully fledged GUI lets you explore all modules visually and acoustically
+See a real time waveform/spectrogram/cochleogram of your voice
+See the auditory image model live
+Hear how your voice sounds pitch-shifted/flanged/echoed
+Explore a fully functioning multichannel hearing aid
+See a live visualization of your vocal tract
+Objective measures: measure the quality and intelligibility of speech and see how it changes when noise or reverberation are added
+Reduce noise with a Wiener filter or spectal subtraction.
+Subjective measures: measure the roughness, sharpness, loudness or annoyance of sound
+Build your own modules and simply drop them in the ‘rt_modules’ folder to run
+Fully object oriented - easy to expand, understand and debug, each module has only two substantive functions that are called automatically: initialization and process
+Reasonably well optimised. Most modules are fast enough for real time, but not at the price of software legibility
+Code is maintained on github - fully open and curated.
+Future-proof software, following all matlab-conventions, no tricks, no mex.
+Incorporates lots of third-party software into a unified software framework that makes results more comparable
+Let the sound fly through space by dynamically changing the head related transfer function.
+Simple guis that make calibration simple
+Write powerful self running scripts in 4 lines
+
+
 A platform to use matlab code in real time sound research and development
 Real time sound platform manifesto - RTSP
 
