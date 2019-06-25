@@ -3,7 +3,7 @@
 
 
 classdef param_button < parameter
-    properties (SetAccess = protected)
+    properties
         button_callback_function;
         button_text;
         button_target=[]; % can be set to modify specific objects in other contexts

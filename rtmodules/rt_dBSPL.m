@@ -27,8 +27,10 @@ classdef rt_dBSPL < rt_measurer
             
             s='Sound level meter. A-level code The A-weighting filter''s coefficients';
             s=[s 'are acccording to IEC 61672-1:2002 standard from'];
-            s=[s ' https://uk.mathworks.com/matlabcentral/fileexchange/46819-a-weighting-filter-with-matlab'];
+            s=[s 'https://uk.mathworks.com/matlabcentral/fileexchange/46819-a-weighting-filter-with-matlab'];
             s=[s 'the module includes an octave band filter from the matlab implementation'];                      
+            s=[s 'Parameters are Bandwidth (1 octave,1/2 octave,1/3 octave,1/6 octave,1/12 octave,1/48 octave'];                      
+            s=[s 'and the integration time in seconds'];                      
             obj.descriptor=s;
             
         end
@@ -37,9 +39,8 @@ classdef rt_dBSPL < rt_measurer
             
             Fs=obj.parent.SampleRate;
             
-            obj.buffertime=2;
-            obj.dbbuffer=circbuf1(round(Fs*obj.buffertime/obj.parent.FrameLength));
-            
+            obj.dbbuffer=circbuf1(round(Fs*obj.parent.PlotWidth/obj.parent.FrameLength));
+                        
             N = 6;           % Filter Order
             F0 = 1000;       % Center Frequency (Hz)
             oneOctaveFilter = octaveFilter('FilterOrder', N, ...
@@ -71,6 +72,8 @@ classdef rt_dBSPL < rt_measurer
                 fs{i+2}='total(dBA)';
                 set(measax,'xtick',1:length(obj.octbandfilt)+2,'xticklabel',fs)
             end
+            set_changed_status(obj.p,0);
+
         end
         
         
@@ -95,7 +98,6 @@ classdef rt_dBSPL < rt_measurer
             dbmeanA=rms(sa);
             dbmeanA=20*log10(dbmeanA/obj.P0);
             
-            %             ret.dbslow=20*log10(mean(get(obj.dbbuffer)));
             c=zeros(size(obj.octbandfilt));
             for i=1:length(obj.octbandfilt)
                 x= step(obj.octbandfilt{i},sig);

@@ -16,7 +16,7 @@ classdef rt_output_speaker < rt_output
             pars.KeepUnmatched=true;
             addParameter(pars,'system_output_type','Default');
             addParameter(pars,'Calibrate',1);
-            addParameter(pars,'CalibrationFile','HeadphonesAKGK271.m');
+            addParameter(pars,'CalibrationFile','AKG_K271_MkII_1_3_octave.m');
             parse(pars,varargin{:});
             obj.fullname=sprintf('speaker output: %s',pars.Results.system_output_type);
             pre_init(obj);  % add the parameter gui
@@ -40,6 +40,10 @@ classdef rt_output_speaker < rt_output
             if cal
                 % load calibration file
                 cf=getvalue(obj.p,'CalibrationFile');
+                if ~contains(cf,'.m')
+                    cf=[cf '.m'];
+                end
+
                 run(cf); % this loads a structure called 'calib'
                 gains=calib.gains;
                 

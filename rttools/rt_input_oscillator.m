@@ -250,7 +250,7 @@ classdef rt_input_oscillator < rt_input
         end
         
         function sig=calibrate_inp(obj,sig)
-            maxamp=obj.P0*power(10,obj.MAXVOLUME/20);
+            maxamp=obj.P0*power(10,(obj.MAXVOLUME-3)/20);
             calib=20*log10(maxamp/1); % how many more dB because of pascale
 %             calib=calib-40; % to get it in the right ballpark
             fac=power(10,(calib+obj.parent.input_gain)/20);

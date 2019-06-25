@@ -1,10 +1,7 @@
 %   Copyright 2019 Stefan Bleeck, University of Southampton
 %   Author: Stefan Bleeck (bleeck@gmail.com)
 
-function calib=run_input_calibration(bw,filename,calib_level,input)
-if nargin<4
-    input='Default';
-end
+function calib=run_output_calibration(bw,filename,calib_level)
 if nargin<3
     calib.calib_level=calib_level;
 end
@@ -14,10 +11,6 @@ end
 if nargin<1
     bw='1 octave';
 end
-
-
-% bw='2/3 octave';
-% bw='1/3 octave';
 
 switch bw
     case '1 octave'
@@ -46,12 +39,8 @@ end
 pp=parameterbag('calibration');
 for i=1:frf
     s=sprintf('%4.1f Hz',calib.preferred_frequencies(i));
-    ppp{i}=param_number_with_button(s,calib_level,'button_text','measure sound');
+    ppp{i}=param_number_with_button(s,calib_level,'button_callback_function',sprintf('play_calibration_sound(%f,%f)',calib.preferred_frequencies(i),calib_level),'button_text','play sound');
     add(pp,ppp{i})
-    cbfct=sprintf('setvalue(param.button_target,''%s'',measure_calibration_sound(%f,''%s''))',s,calib.preferred_frequencies(i),input);
-    ppp{i}.button_target=pp;
-    ppp{i}.button_callback_function=cbfct;
-
 end
 % add(pp,param_number('AssumedLoudnessdB',calib_level));
 add(pp,param_generic('filename',filename));
@@ -61,7 +50,7 @@ gui(pp,'modal');
 
 % save the file in readable form:
 s=[];c=0;
-c=c+1;s{c}='% Input calibration for realtime sound platform (github:sbleeck/matlab_real_time_sound)';
+c=c+1;s{c}='% Output calibration for realtime sound platform (github:sbleeck/matlab_real_time_sound)';
 
 if ismac
     [status, fullname] = system('id -F');
@@ -71,7 +60,6 @@ else
 end
 
 c=c+1;s{c}=sprintf('%% %s',date);
-c=c+1;s{c}=sprintf('%%');
 
 c=c+1;s{c}=sprintf('calib.bandwidth=''%s'';',calib.bandwidth);
 sc='[';

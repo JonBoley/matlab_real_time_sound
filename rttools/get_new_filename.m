@@ -8,7 +8,6 @@ function filename=get_new_filename(prefix,extension)
 % example: newfile('new','mat') gives back new1.mat
 % again:   newfile('new','mat') gives back new2.mat new3.mat etc
 
-%   Copyright 2019 Stefan Bleeck, University of Southampton
 if nargin<2 || strcmp(extension,'')
     extension='*';
 else
@@ -25,11 +24,16 @@ if isempty(allfiles)
 end
 
 for i=1:length(allfiles)
+% i=length(allfiles);
     lastfileinfo=allfiles(i);
     lastfile=lastfileinfo.name;
     nr1=strfind(lastfile,prefix)+length(prefix);
     nr2=strfind(lastfile,extension);
-    nr(i)=str2num(lastfile(nr1:nr2));
+    if nr2>nr1
+        nr(i)=str2num(lastfile(nr1:nr2));
+    else
+        nr(i)=0;
+    end
 end
 
 newnumber=max(nr)+1;
