@@ -1,9 +1,9 @@
 %   Copyright 2019 Stefan Bleeck, University of Southampton
 %   Author: Stefan Bleeck (bleeck@gmail.com)
+% this script runs and test all modules in the directory for errors, messages and speed
+% it saves a csv file with all information about speed. To build up a library of computer resources required, it would be really 
+% useful if you would send me a copy of this csv file! Thanks! :)
 
-
-% test all modules in the directory for errors, messages and speed
-cd('/Users/bleeck/Google Drive/projects/realtime');
 clear all
 close all force
 clc
