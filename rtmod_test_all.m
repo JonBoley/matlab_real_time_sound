@@ -15,7 +15,7 @@ wdir='rtmodules';
 base_d=cd(wdir);
 allfiles=dir();
 obj=[];
-r=[];c=0;
+res_save=[];c=0;
 for i=1:length(allfiles)
     ll=allfiles(i).name;
     %     ll
@@ -29,7 +29,7 @@ for i=1:length(allfiles)
         c=c+1;
         rr=runo(o);
         if ~isempty(rr)
-            r{c}=rr;
+            res_save{c}=rr;
         end
         base_d=cd(ud);
         fprintf(' ...finished\n');
@@ -42,21 +42,30 @@ cd(base_d);
 
 c=0;
 rnn=[];
-for i=1:length(r)
-    i
-    if ~isempty(r{i})
+for i=1:length(res_save)
+    if ~isempty(res_save{i})
         c=c+1;
-        rnn{c}=r{i};
+        rnn{c}=res_save{i};
     end
 end
 
 % now add the benchmark info too:
-a=bench(5);
+a=bench(1);
 a=mean(a,1);
 
+
+r=resempty;
+r.filename='Matlab Bench';
+r.speed=a;
 c=c+1;
-r{c}=
+rnn{c}=r;
 save_excel(rnn,'fullinfo.csv');
+
+
+
+
+
+
 
 function res=runo(mod)
 
