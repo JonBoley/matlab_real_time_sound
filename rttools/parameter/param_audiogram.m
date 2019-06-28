@@ -2,8 +2,6 @@
 %   Author: Stefan Bleeck (bleeck@gmail.com)
 
 
-% audiogram x-values: 250, 500, 1000, 2000, 4000
-% y-values: -10:60
 
 %   Copyright 2019 Stefan Bleeck, University of Southampton
 classdef param_audiogram < parameter
@@ -18,13 +16,8 @@ classdef param_audiogram < parameter
         function param=param_audiogram(text,vals,varargin)
             param@parameter(text,vals,varargin{:});
             param.value=vals;
-            
-            pars = inputParser;
-            pars.KeepUnmatched=true;
-            addParameter(pars,'frequencies',[250,500,1000,2000,4000]);
-            parse(pars,varargin{:});
-            
-            param.my_frequencies=pars.Results.frequencies;
+                       
+            param.my_frequencies=vals(:,1);
             
             
         end
@@ -38,7 +31,7 @@ classdef param_audiogram < parameter
             if ishandle(param.mypolyline)
                 v=get(param.mypolyline,'Position');
                 for i=1:length(v)
-                    param.value(i)=v(i,2);
+                    param.value(i,2)=v(i,2);
                 end
             end
             vv=param.value;
@@ -51,7 +44,7 @@ classdef param_audiogram < parameter
                 %             clickCallback=@(src,event)roi_callback_function(param);
                 %             l = addlistener(param.mypolyline,'ROIMoved',clickCallback);
                 vvv(:,1)=1:length(param.my_frequencies);
-                vvv(:,2)=vv;
+                vvv(:,2)=vv(:,2);
                 set(param.mypolyline,'Position',vvv);
             end
             param.is_changed=1;
@@ -77,14 +70,13 @@ classdef param_audiogram < parameter
             set(up,'xticklabel',f);
             set(up,'ytick',[0,20,40,60,80]);
             set(up,'yticklabel',[0,20,40,60,80]);
-            thresh=getvalue(param);
+            audigram=getvalue(param);
             t=matlab.graphics.primitive.Text;
             t.String=param.text;
             set(up,'title',t);
             x=1:length(f);
-            y=thresh;
             line(up,[0.5 length(f)+0.5],[0  0],'color','b');
-            param.mypolyline = drawpolyline(up,'Position',[x;y]');
+            param.mypolyline = drawpolyline(up,'Position',[x' audigram(:,2)]);
             clickCallback=@(src,event)roi_callback_function(param);
             l = addlistener(param.mypolyline,'ROIMoved',clickCallback);
             param.myaxes=up;
@@ -94,19 +86,19 @@ classdef param_audiogram < parameter
         function roi_callback_function(param,evt)
             % just read the y-values and redraw the values
             v=get(param.mypolyline,'Position');
-            setvalue(param,v(:,2));
+            old_v=param.value; % get the frequencies
+            new_v=old_v;
+            new_v(:,2)=v(:,2);
+            setvalue(param,new_v);
         end
-        
-        
-        
         
         function s=get_value_string(param)  % return the pair 'name', value, as needed for disp
             vv=getvalue(param);
             f=param.my_frequencies;
             mlist='[';
-            mlist=[mlist sprintf('%4.0f %2.1f',f(1),vv(1))];
+            mlist=[mlist sprintf('%4.0f,%2.1f',f(1),vv(1))];
             for i=2:length(vv)
-                mlist=[mlist sprintf(';%4.0f %2.1f',f(i),vv(i))];
+                mlist=[mlist sprintf(';%4.0f,%2.1f',f(i),vv(i))];
             end
             mlist=[mlist,']'];
             s = sprintf('''%s'',%s',param.text,mlist);
