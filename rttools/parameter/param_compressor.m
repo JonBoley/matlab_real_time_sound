@@ -76,6 +76,7 @@ classdef param_compressor < parameter
                 addlistener(param.mypoint,'ROIMoved',clickCallback);set(param.mypoint,'Position',kneep);
             end
             param.is_changed=1;
+            end
         end
         
         function draw(param,panel,x,y)
