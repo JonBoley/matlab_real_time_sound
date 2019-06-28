@@ -1,7 +1,8 @@
+
 %   Copyright 2019 Stefan Bleeck, University of Southampton
 %   Author: Stefan Bleeck (bleeck@gmail.com)
 % this script runs and test all modules in the directory for errors, messages and speed
-% it saves a csv file with all information about speed. To build up a library of computer resources required, it would be really 
+% it saves a csv file with all information about speed. To build up a library of computer resources required, it would be really
 % useful if you would send me a copy of this csv file! Thanks! :)
 
 clear all
@@ -22,7 +23,7 @@ for i=1:length(allfiles)
     if contains(ll,'.m') && ~contains(ll,'~')
         %         i
         name=ll(1:end-2);
-        fprintf('%d: starting %s ... ',i,name);
+        fprintf('%d: starting %s... ',i,name);
         str=sprintf('o=%s(obj);',name);
         eval(str);
         ud=cd(base_d);
@@ -32,7 +33,7 @@ for i=1:length(allfiles)
             res_save{c}=rr;
         end
         base_d=cd(ud);
-        fprintf(' ...finished\n');
+        fprintf(' ...processed successfully with %3.1f%% real time speed\n',rr.speed);
         
         % clear all
         close all force
@@ -52,7 +53,6 @@ end
 % now add the benchmark info too:
 a=bench(1);
 a=mean(a,1);
-
 
 r=resempty;
 r.filename='Matlab Bench';
@@ -123,3 +123,4 @@ res.fullname='';
 res.speed='';
 res.description='';
 end
+
