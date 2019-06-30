@@ -62,7 +62,7 @@ classdef param_compressor < parameter
         
         function setvalue(param,vv)  % get the value of this param, incoming is thesh and ratio
             param.value=vv;
-            if ishandle(param.myaxis) 
+            if ishandle(param.myaxis)
                 kneep=comp2knee(param,vv(1),vv(2));
                 x=kneep(1);y=kneep(2);
                 maxp=param.maxamplitude;
@@ -76,8 +76,8 @@ classdef param_compressor < parameter
                 addlistener(param.mypoint,'ROIMoved',clickCallback);set(param.mypoint,'Position',kneep);
             end
             param.is_changed=1;
-            end
         end
+        
         
         function draw(param,panel,x,y)
             size=get_draw_size(param,panel);
@@ -97,7 +97,7 @@ classdef param_compressor < parameter
             set(param.myaxis,'ylim',[lowlim-d,maxp(2)+d]);
             param.myaxis.Title.Interpreter='None';
             param.myaxis.Title.String=param.text;
-
+            
             % create the kneepoint and update graphics
             v=param.value; % get thresh and ration
             setvalue(param,v); % uodate grapgiccs

@@ -15,10 +15,7 @@ classdef param_audiogram < parameter
         function param=param_audiogram(text,vals,varargin)
             param@parameter(text,vals,varargin{:});
             param.value=vals;
-                       
             param.my_frequencies=vals(:,1);
-            
-            
         end
         
         function size=get_draw_size(param,panel)
@@ -39,9 +36,6 @@ classdef param_audiogram < parameter
         function setvalue(param,vv)  % get the value of this param
             param.value=vv;
             if ishandle(param.mypolyline)
-                %             param.mypolyline = drawpolyline(up,'Position',[x;y]');
-                %             clickCallback=@(src,event)roi_callback_function(param);
-                %             l = addlistener(param.mypolyline,'ROIMoved',clickCallback);
                 vvv(:,1)=1:length(param.my_frequencies);
                 vvv(:,2)=vv(:,2);
                 set(param.mypolyline,'Position',vvv);
