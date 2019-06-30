@@ -77,6 +77,7 @@ classdef rt_output_speaker < rt_output
             end
             fac=power(10,(obj.parent.output_gain)/20);
             sig=sig.*fac;
+            obj.parent.last_played_stim=sig; % save this stimuls for when measuring latency
             obj.parent.player(sig);
         end
         

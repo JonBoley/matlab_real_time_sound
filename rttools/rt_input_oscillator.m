@@ -82,7 +82,8 @@ classdef rt_input_oscillator < rt_input
                         n=obj.mynoisegenerator();
                         m=[m;n];
                     end
-                    obj.noisecalib=max([max(m) -min(m)])*0.95;
+%                     obj.noisecalib=max([max(m) -min(m)])*0.95;
+                    obj.noisecalib=rms(m)*0.95;
                 otherwise
                     obj.osc=audioOscillator('SignalType',getvalue(obj.p,'SignalType'),...
                         'Frequency',getvalue(obj.p,'Frequency'),...

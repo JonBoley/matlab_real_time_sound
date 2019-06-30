@@ -3,7 +3,6 @@
 
 
 
-%   Copyright 2019 Stefan Bleeck, University of Southampton
 classdef param_audiogram < parameter
     properties (SetAccess = protected)
         mypolyline;

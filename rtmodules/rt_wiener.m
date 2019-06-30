@@ -88,7 +88,7 @@ classdef rt_wiener < rt_manipulator
             %% noise power estimate
             % for the time beeing: assume a pink noise and calculate
             % initial stats:
-            [noissig,ofs]=audioread('/Users/bleeck/Google Drive/projects/realtime/noises/pink.wav',[1,50000]);
+            [noissig,ofs]=audioread('./noises/pink.wav',[1,50000]);
             noissig=resample(noissig,fs,ofs);
             n1=1;      n2=L;
             for I=1:5

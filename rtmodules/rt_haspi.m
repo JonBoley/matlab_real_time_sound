@@ -19,7 +19,7 @@ classdef rt_haspi < rt_measurer
             pars = inputParser;
             pars.KeepUnmatched=true;
             addParameter(pars,'integrationPeriod',1);
-            addParameter(pars,'Audiogram',[0,10,15,20,25,30]);
+            addParameter(pars,'Audiogram',[250,0.0; 500,10.0;1000,20.0;2000,30.0;4000,40.0;6000,45.0]);
             addParameter(pars,'SpeechLevel',65);
             
             parse(pars,varargin{:});
@@ -94,7 +94,9 @@ classdef rt_haspi < rt_measurer
             Level1=getvalue(obj.p,'SpeechLevel');
             % HL		(1,6) vector of hearing loss at the 6 audiometric frequencies
             %			  [250, 500, 1000, 2000, 4000, 6000] Hz.
-            HL=getvalue(obj.p,'Audiogram');
+            HLs=getvalue(obj.p,'Audiogram');
+            HL=HLs(:,2);
+            HL=HL';
             haspi = HASPI_v1(ref_data,fs,deg_data,fs,HL,Level1);
             push(obj.haspi_buffer,haspi);
             

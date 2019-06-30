@@ -22,7 +22,7 @@ classdef rt_input_microphone < rt_input
             
             pre_init(obj);  % add the parameter gui
             add(obj.p,param_checkbox('Calibrate',pars.Results.Calibrate));
-            add(obj.p,param_generic('system_output_type',pars.Results.system_input_type));
+            add(obj.p,param_generic('system_input_type',pars.Results.system_input_type));
 %             add(obj.p,param_generic('Gains',pars.Results.Gains));
                         add(obj.p,param_filename('CalibrationFile',pars.Results.CalibrationFile));
 
@@ -39,7 +39,7 @@ classdef rt_input_microphone < rt_input
             afr.SamplesPerFrame=obj.parent.FrameLength;
             afr.SampleRate=obj.parent.SampleRate;
             afr.NumChannels=obj.parent.Channels;
-            afr.Device=getvalue(obj.p,'system_output_type');
+            afr.Device=getvalue(obj.p,'system_input_type');
             
             obj.parent.recorder=afr;
             
@@ -66,6 +66,7 @@ classdef rt_input_microphone < rt_input
                 set_changed_status(obj.p,0);
             end
             sig = obj.parent.recorder();
+            obj.parent.last_recorded_stim=sig;
             
             cal=getvalue(obj.p,'Calibrate');
             if cal

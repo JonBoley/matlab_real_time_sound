@@ -33,13 +33,13 @@ classdef rt_graficequal < rt_manipulator
             set_listener(obj.p,obj);
             add(obj.p,param_button('change gains','button_text','open gui','button_callback_function','display_equalizer(param.button_target);','button_target',obj));
             
-            s='Graphic equalizer - standards-based graphic equalizer \n';
-            s=[s 'implements the matlab function graphicEQ \n'];
-            s=[s 'https://uk.mathworks.com/help/audio/ref/graphiceq-system-object.html \n'];
-            s=[s 'The graphicEQ System object? implements a graphic equalizer that can tune the gain on \n'];
-            s=[s 'individual octave or fractional octave bands. The object filters the data independently \n'];
-            s=[s 'across each input channel over time using the filter specifications. \n'];
-            s=[s 'Center and edge frequencies of the bands are based on the ANSI S1.11-2004 standard.\n'];
+            s='Graphic equalizer - standards-based graphic equalizer  ';
+            s=[s 'implements the matlab function graphicEQ  '];
+            s=[s 'https://uk.mathworks.com/help/audio/ref/graphiceq-system-object.html  '];
+            s=[s 'The graphicEQ System object? implements a graphic equalizer that can tune the gain on  '];
+            s=[s 'individual octave or fractional octave bands. The object filters the data independently  '];
+            s=[s 'across each input channel over time using the filter specifications.  '];
+            s=[s 'Center and edge frequencies of the bands are based on the ANSI S1.11-2004 standard. '];
             
             obj.descriptor=s;
         end

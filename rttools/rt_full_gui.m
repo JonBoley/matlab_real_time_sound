@@ -30,7 +30,7 @@ classdef rt_full_gui <handle%#Lklklk11
         
         viz_panel; % panel that vizualzier use
         meas_panel; % panel that measurer use
-
+        
     end
     
     methods
@@ -44,7 +44,7 @@ classdef rt_full_gui <handle%#Lklklk11
             obj.mymodel=rt_model;  % start the main model with default parameter
             obj.mymodel.parent=obj;  % set myself as the parent
             obj.p=obj.mymodel.p; % drastic: copy over all main model parameter
-%             add(obj.p,param_button('press to calibrate','button_text','button...','button_callback_function','calibrate(param.parent.parent.parent);'));
+            %             add(obj.p,param_button('press to calibrate','button_text','button...','button_callback_function','calibrate(param.parent.parent.parent);'));
             
             obj.modules=containers.Map;
             for i=1:3
@@ -78,14 +78,11 @@ classdef rt_full_gui <handle%#Lklklk11
             setvalue(obj.p,'Visualizations','Waveform');
             setvalue(obj.p,'applyManipulation',0);
             setvalue(obj.p,'showVisualization',1);
-            
             setvalue(obj.p,'doMeasurement',0);
             setvalue(obj.p,'Measurements','Decibel Sound Pressure Level');
             setvalue(obj.p,'SoundTarget','speaker output: Default');
             setvalue(obj.p,'PlaySound',0);
-            
-%             set_calibrations(obj.mymodel,obj.mymodel.calibration_gain_mic,obj.mymodel.input_gain,obj.mymodel.output_gain);
-            
+                      
             fullgui_post_init(obj,'input');
             fullgui_post_init(obj,'noise');
             fullgui_post_init(obj,'manipulation');
@@ -152,7 +149,7 @@ classdef rt_full_gui <handle%#Lklklk11
             pp=param_popupmenu_with_button('SoundTarget',targets{end},'list',targets,...
                 'button_text','properties',...
                 'button_callback_function','change_param(param.button_target,''output'');','button_target',obj);
-
+            
             add(obj.p,pp);
             add(obj.p,param_checkbox('PlaySound',0));
         end
@@ -198,7 +195,6 @@ classdef rt_full_gui <handle%#Lklklk11
             obj.mymodel.PlotWidth=getvalue(obj.p,'PlotWidth','sec');
             switch type
                 case 'input'
-                    %% sources
                     sourcename=getvalue(obj.p,'SoundSource');
                     obj.mymodel.Channels=getvalue(obj.p,'Channels');
                     obj.mymodel.FrameLength=getvalue(obj.p,'FrameLength');
@@ -210,21 +206,11 @@ classdef rt_full_gui <handle%#Lklklk11
                     initialize(obj.input_process);
                     
                 case 'noise'
-                    % noise
                     noisewav=getvalue(obj.p,'Noise');
                     setvalue(obj.mymodel.add_noise_process.basic_module.p,'filename',noisewav);
                     post_init(obj.mymodel.add_noise_process.basic_module);
-                    %                     noisewav='Pink.wav';
-                    %                     noiseatten=0;
-                    %                     n_par=rt_input_add_file(obj,'filename',noisewav,'foldername',obj.pathes.noisepath,'attenuation',noiseatten); % pass the parameter for later selection
-                    %                     obj.add_noise_module=n_par; % save for later, so that I can set the snr through the gui
-                    %                     newprocess=add_module(obj.mymodel,n_par,'input');
-                    %                     replace_process(obj.mymodel,obj.add_noise_process,newprocess); % replace the old process
-                    %                     obj.add_noise_process=newprocess;
-                    %                     initialize(obj.add_noise_process);
-                    
+                             
                 case 'manipulation'
-                    % manipulation
                     maisel=getvalue(obj.p,'Manipulations');
                     obj.mymodel.OverlapAdd=getvalue(obj.p,'OverlapAdd');
                     newprocess=add_module(obj.mymodel,obj.modules(maisel),'manipulation');
@@ -233,7 +219,6 @@ classdef rt_full_gui <handle%#Lklklk11
                     initialize(obj.manipulation_process);
                     
                 case 'visualization'
-                    % visualization,
                     visusel=getvalue(obj.p,'Visualizations');
                     newprocess=add_module(obj.mymodel,obj.modules(visusel),'visualization');
                     replace_process(obj.mymodel,obj.visualization_process,newprocess); % replace the old process
@@ -242,7 +227,6 @@ classdef rt_full_gui <handle%#Lklklk11
                     initialize(obj.visualization_process);
                     
                 case 'measurement'
-                    % measurement
                     meassel=getvalue(obj.p,'Measurements');
                     newprocess=add_module(obj.mymodel,obj.modules(meassel),'measurement');
                     replace_process(obj.mymodel,obj.measurement_process,newprocess); % replace the old process
@@ -251,7 +235,6 @@ classdef rt_full_gui <handle%#Lklklk11
                     initialize(obj.measurement_process);
                     
                 case 'output'
-                    %% target
                     targetname=getvalue(obj.p,'SoundTarget');
                     target=obj.modules(targetname);
                     newprocess=add_module(obj.mymodel,target,'output');
@@ -292,10 +275,6 @@ classdef rt_full_gui <handle%#Lklklk11
                     str=sprintf('o=%s(obj);',name);
                     eval(str);
                     obj.modules(o.fullname)=o;
-%                     
-%                     if o.show==0  % some modules don't need/want to be shown to user (inputs)
-%                         continue
-%                     end
                     
                     if o.is_manipulation %% add to screen as manipulation
                         obj.display_modules{1}(o.fullname)=o;
@@ -334,7 +313,6 @@ classdef rt_full_gui <handle%#Lklklk11
         
         function updateparams(obj)
             %% check what has changed and decide if it's important to rerun initialization
-            
             if has_changed(getparameter(obj.p,'SoundSource'))
                 fullgui_post_init(obj,'input');
             end
@@ -473,30 +451,8 @@ classdef rt_full_gui <handle%#Lklklk11
             obj.tlast=t;
         end
         
-%         function calibrate(obj)
-%             
-%             %             obj.calibfres = ([250, 500, 1000, 2000, 4000]);% octave band center frequencies
-%             % this is the loudness that a signal need to be boosted to achieve the
-%             % same reading as a pure tone 1 meter away from the artifical head
-%             % (done by Stefan 12.9.2018)
-%             %             obj.in_calibdB=[70 82.5 81.5 78 74 ];
-%             
-%             
-%             
-%             pp=parameterbag('calibration properties');
-%             add(obj.p,param_button('finished?','button_text','done  ','button_callback_function','close_gui(param.parent);'));
-%             %             add(obj.p,param_button('for more info:','button_text','show description','button_callback_function','show_description(param.button_target)','button_target',obj));
-%             
-%             add(pp,param_float('microphone calibration correction (gain)',obj.mymodel.calibration_gain_mic,'unittype',unit_mod,'unit','dB'));
-%             add(pp,param_float('speaker calibration correction (gain)',obj.mymodel.gain_correct_speaker,'unittype',unit_mod,'unit','dB'));
-%             add(pp,param_float('assume file has maximum overall level (SPL)',obj.mymodel.max_file_level,'unittype',unit_mod,'unit','dB'));
-%             gui(pp,'modal');
-%             obj.mymodel.calibration_gain_mic=getvalue(pp,'microphone calibration correction (gain)','dB');
-%             obj.mymodel.gain_correct_speaker=getvalue(pp,'speaker calibration correction (gain)','dB');
-%             obj.mymodel.max_file_level=getvalue(pp,'assume file has maximum overall level (SPL)','dB');
-%         end
-        
-        function run(obj)            
+              
+        function run(obj)
             if getvalue(obj.p,'IsRunning')==0
                 obj.mymodel.IsRunning=0;
             else
@@ -514,8 +470,7 @@ classdef rt_full_gui <handle%#Lklklk11
                         updateparams(obj);
                         set_changed_status(obj.p,0);
                     end
-                    % run all parts - in the full gui, there can only ever
-                    % be 6!
+                    % run all parts - in the full gui, there can only ever be 6!
                     
                     % input is always there:
                     process(obj.input_process);
@@ -540,14 +495,13 @@ classdef rt_full_gui <handle%#Lklklk11
                     end
                     obj.mymodel.global_time=obj.mymodel.global_time+obj.mymodel.FrameLength/obj.mymodel.SampleRate;
                     drawnow limitrate
-               
-                obj.mymodel.global_time=obj.mymodel.global_time+obj.mymodel.FrameLength/obj.mymodel.SampleRate;
-                if obj.mymodel.global_time>getvalue(obj.mymodel.p,'Duration')
-                    obj.mymodel.IsRunning=0;
-                    setvalue(obj.p,'IsRunning',0);
-                    break
-                end
-                
+                    
+                    obj.mymodel.global_time=obj.mymodel.global_time+obj.mymodel.FrameLength/obj.mymodel.SampleRate;
+                    if obj.mymodel.global_time>getvalue(obj.mymodel.p,'Duration')
+                        obj.mymodel.IsRunning=0;
+                        setvalue(obj.p,'IsRunning',0);
+                        break
+                    end
                 end
                 
                 if isequal(obj.speedtimer.Running,'on')
@@ -566,6 +520,7 @@ classdef rt_full_gui <handle%#Lklklk11
         
         function save_script_file(obj,fname)
             % save a minimum script that can run standalone (and easily expanded)
+            od=cd('scripts');
             if nargin<2
                 fname='script_last_saved';
                 fname=get_new_filename(fname,'m');
@@ -576,9 +531,9 @@ classdef rt_full_gui <handle%#Lklklk11
             n=n+1;s{n}='clear all';
             n=n+1;s{n}='clc';
             n=n+1;s{n}='close all force';
-            n=n+1;s{n}='addpath(genpath(''./rttools''));';
-            n=n+1;s{n}='addpath(genpath(''./rtmodules''));';
-            n=n+1;s{n}='addpath(genpath(''./thirdparty''));';
+            n=n+1;s{n}='addpath(genpath(''../rttools''));';
+            n=n+1;s{n}='addpath(genpath(''../rtmodules''));';
+            n=n+1;s{n}='addpath(genpath(''../thirdparty''));';
             
             % create the model,(with graphics)
             pstr=get_param_value_string(obj.p);
@@ -635,15 +590,16 @@ classdef rt_full_gui <handle%#Lklklk11
                 modstr=get_as_script_string(mod);
                 n=n+1;s{n}=sprintf('module_%d=%s;',modnr,modstr);
                 n=n+1;s{n}=sprintf('add_module(mymodel,module_%d);',modnr);
-            end    
+            end
             
             % then initialize and run
             n=n+1;s{n}='gui(mymodel);';
             n=n+1;s{n}='initialize(mymodel);';
             n=n+1;s{n}='run_once(mymodel);';
             n=n+1;s{n}='close(mymodel);';
-
+            
             savetofile(s,fname);
+            cd(od);
             
         end
     end

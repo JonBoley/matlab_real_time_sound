@@ -16,7 +16,7 @@ if nr==1
     for i=1:length(rr)
         r(i)=str2double(rr{i});
     end
-elseif nr==2 % do it in pairs
+elseif nr==2 % do it in pairs (for an audiogram for example)
     rr=strsplit(str,',');
     c=1;
     nre=2*floor(length(rr)/2);

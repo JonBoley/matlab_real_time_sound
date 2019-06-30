@@ -26,7 +26,7 @@ classdef rt_input_file_random < rt_input
             pars = inputParser;
             pars.KeepUnmatched=true;
             addParameter(pars,'foldername','.');
-            addParameter(pars,'MaxFileLeveldB',80);  % how loud we assume the file to be when fully loud
+            addParameter(pars,'MaxFileLeveldB',100);  % how loud we assume the file to be when fully loud
             parse(pars,varargin{:});
             add(obj.p,param_foldername('foldername',pars.Results.foldername));
             add(obj.p,param_number('MaxFileLeveldB',pars.Results.MaxFileLeveldB));
@@ -87,7 +87,7 @@ classdef rt_input_file_random < rt_input
         function sig=calibrate_in(obj,sig)
             maxdb=getvalue(obj.p,'MaxFileLeveldB');
             maxamp=obj.P0*power(10,maxdb/20);
-            calib=20*log10(maxamp/1); % how many more dB because of pascale
+            calib=20*log10(maxamp); % how many more dB because of pascal
             fac=power(10,(calib+obj.parent.input_gain)/20);
             sig=sig.*fac;
         end

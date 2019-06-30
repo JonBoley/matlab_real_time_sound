@@ -51,7 +51,6 @@ classdef rt_waveform < rt_visualizer
             y=get(buf);
             y=y(1:length(obj.x_vals));
             %             allx=linspace(global_time,global_time+obj.parent.PlotWidth,length(y));
-            %             pmax=obj.P0*power(10,obj.parent.max_file_level/20); % calibrate this to the assumed maximum amplitude of a wav file
             g=getvalue(obj.p,'zoom');
             ppmax=2/g; % 100 dB
             

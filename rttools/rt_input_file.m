@@ -21,7 +21,7 @@ classdef rt_input_file < rt_input
             pars.KeepUnmatched=true;
             addParameter(pars,'filename','emergency.wav');
             addParameter(pars,'foldername','.');
-            addParameter(pars,'MaxFileLeveldB',80);  % how loud we assume the file to be when fully loud
+            addParameter(pars,'MaxFileLeveldB',100);  % how loud we assume the file to be when fully loud
             
             parse(pars,varargin{:});
             add(obj.p,param_number('MaxFileLeveldB',pars.Results.MaxFileLeveldB));
@@ -60,21 +60,17 @@ classdef rt_input_file < rt_input
             sig=resample(sig,obj.parent.SampleRate,obj.fileFs); % ressample to wanted SR
             sig=calibrate(obj,sig);
         end
-        
-        
+             
         function close(obj)
             if ~isempty(obj.recorder) % first release the old one
                 release(obj.recorder);
             end
         end
-        
-        
+            
         function sig=calibrate_in(obj,sig)
             maxdb=getvalue(obj.p,'MaxFileLeveldB');
             maxamp=obj.P0*power(10,maxdb/20);
-            calib=20*log10(maxamp/1); % how many more dB because of pascale
-
-            
+            calib=20*log10(maxamp); % how many more dB because of pressure in Pascal        
             fac=power(10,(calib+obj.parent.input_gain)/20);
             sig=sig.*fac;
         end

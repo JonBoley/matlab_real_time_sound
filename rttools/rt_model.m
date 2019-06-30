@@ -14,11 +14,14 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
         OverlapAdd=0; % if we want overlap and add (slow)
         
         %                 properties that are necessary for the running
-        IsRunning=1;
+        IsRunning=1;      % are we running or not
         global_time=0;    % keeps track of the overall passed time, important for plotting
-        clean_stim;   % when cleaning ideally, sometimes we need the clean signal
-        current_stim;
         
+        current_stim;  % the model can only have one currently active stimulus.
+        last_played_stim; % I need this purely for the measurement of latency: store the stimulus that is last played
+        last_recorded_stim; % I need this purely for the measurement of latency: store the stimulus that is last played
+                clean_stim;   % when cleaning ideally, sometimes we need the clean signal stored from before adding noise
+
         processes=[]; % all the information about processes
         player; % each model can only have one open SoundSource and drain. Therefore make sure it's central!
         recorder;
