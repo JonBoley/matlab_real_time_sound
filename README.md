@@ -15,8 +15,11 @@ You can do this in two ways:
 The repository consists of around 40 (and counting) modules that all work with real time sound. Many modules are from my research over the last 20 years, some are using open source third party software. Some are just wrapper for the fantastic Matlab system sound objects.
 
 Here are some examples of what you can do: 
+
 •	Use any input or output device on your computer: all are recognised automatically 
-•	Extreme low latencies down to <4 ms, depending on the sample rate and frame rate 
+
+•	Extreme low latencies down to <20 ms, depending on the sample rate and frame rate 
+
 •	Change sample rate, frame length and all other parameters dynamically 
 •	Fully fledged GUI lets you explore all modules visually and acoustically 
 •	See a real time waveform/spectrogram/cochleogram of your voice 
