@@ -6,10 +6,6 @@
 % to choose from, with three categories: manipulations, vizualizations and
 % measurements as well as two windows.
 
-% it is unfortunatly necessary to start the gui from this external script
-% in order to allow settign the right scope for the callbacks (close,
-% start, etc)
-
 clear all
 close all force
 clc
