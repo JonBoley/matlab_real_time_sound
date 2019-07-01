@@ -1,7 +1,6 @@
 %   Copyright 2019 Stefan Bleeck, University of Southampton
 %   Author: Stefan Bleeck (bleeck@gmail.com)
 
-
 classdef rt_module < handle & matlab.mixin.Copyable
     properties
         MAXVOLUME=100;   % not sure where to put this otherwise. The MAximum output level
@@ -52,7 +51,6 @@ classdef rt_module < handle & matlab.mixin.Copyable
             if obj.requires_frame_length>obj.parent.FrameLength
                 fprintf('module %s requires a minumum frame length of %d!\n',obj.fullname,obj.requires_frame_length);
             end
-            
             
             if obj.requires_nr_channels>obj.parent.Channels
                 fprintf('module %s requires %d channels!\n',obj.fullname,obj.requires_nr_channels);
