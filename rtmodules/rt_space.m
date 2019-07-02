@@ -40,6 +40,8 @@ classdef rt_space < rt_manipulator
             obj.descriptor=s;
             
             obj.requires_nr_channels=2; % we need 2 channels!
+            obj.requires_version='R2018b';
+            obj.requires_toolbox='Audio Toolbox';
         end
         
         function post_init(obj) % called the second times around

@@ -29,6 +29,8 @@ classdef rt_module < handle & matlab.mixin.Copyable
         requires_nr_channels=1; % the number of channels required minimum. usually one
         requires_overlap_add=0; % this module requires overlap and add switched on to work properly
         requires_frame_length =32; % standard value, must be longer in some modules
+        requires_version='R2012a'; % minimum matlab verison required
+        requires_toolbox=''; % which toolbox we need
     end
     
     methods
