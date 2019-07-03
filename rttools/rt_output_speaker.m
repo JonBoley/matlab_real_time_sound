@@ -43,7 +43,7 @@ classdef rt_output_speaker < rt_output
                 if ~contains(cf,'.m')
                     cf=[cf '.m'];
                 end
-
+                
                 run(cf); % this loads a structure called 'calib'
                 gains=calib.gains;
                 
@@ -56,14 +56,17 @@ classdef rt_output_speaker < rt_output
                     case 30
                         bw= '1/3 octave';
                 end
-                                
+                
                 obj.my_out_equalizer = graphicEQ('SampleRate',obj.parent.SampleRate,...
                     'EQOrder',2,...
                     'Structure','Cascade',...
                     'Bandwidth',bw,...
                     'Gains',gains);
             end
-             set_changed_status(obj.p,0);
+            set_changed_status(obj.p,0);
+            for i=1:10
+                obj.parent.player(zeros(obj.parent.FrameLength,obj.parent.Channels)); % silly trick to avoid a pause at the beginning: record one frame. That means the first actual recorded frame will be smooth!
+            end
         end
         
         function write_next(obj,sig)
@@ -78,14 +81,14 @@ classdef rt_output_speaker < rt_output
             fac=power(10,(obj.parent.output_gain)/20);
             sig=sig.*fac;
             obj.parent.last_played_stim=sig; % save this stimuls for when measuring latency
-            obj.parent.player(sig);
+            dropout=obj.parent.player(sig);
+            obj.parent.last_dropout=obj.parent.last_dropout+dropout;
         end
         
         % calibration function
         function sig=calibrate_out(obj,sig)
-            sig=obj.my_out_equalizer(sig);            
+            sig=obj.my_out_equalizer(sig);
         end
-        
         
         function close(obj)
             if ~isempty(obj.parent.player) % first release the old one

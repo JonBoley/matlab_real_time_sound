@@ -42,8 +42,10 @@ classdef rt_measure_latency < rt_measurer
         function close(obj)
             % we use this as an opportunity to calculate the results :)
             out=get(obj.out_buffer);
+            out=out/rms(out);
             in=get(obj.in_buffer);
-            
+            in=in/rms(in);
+
             figure(1)
             clf
             subplot(2,1,1);
@@ -59,8 +61,8 @@ classdef rt_measure_latency < rt_measurer
             subplot(2,1,2);
             hold on
             maxlag=0.2*sr; % max latency = 50 ms
-            sout=out(round(0.2*sr):end);
-            sin=in(round(0.2*sr):end);
+            sout=out(round(0.5*sr):end);
+            sin=in(round(0.5*sr):end);
             [r,lags] = xcorr(sin,sout,maxlag);
             h=ceil(length(r)/2);
             sint=r(h:end);
@@ -71,8 +73,10 @@ classdef rt_measure_latency < rt_measurer
             ylabel('correlation');
             
             [pks,loc]=findpeaks(sint,sr,'SortStr','descend');
-            plot(loc(1)*1000,pks(1),'or')
-            text((loc(1)*1000)+5,pks(1)-0.5,sprintf('%2.1f ms',loc(1)*1000),'fontsize',20);
+            plot(loc(1)*1000,pks(1),'or');
+            ttt=sprintf('%2.1f ms',loc(1)*1000);
+            text((loc(1)*1000)+5,pks(1),ttt,'fontsize',20);
+            disp(ttt);
         end
         
     end

@@ -11,8 +11,8 @@ classdef rtprocess_measurement < rtprocess
         %% called the first time around to create a process from a modules
         function obj=rtprocess_measurement(parent,mod)
             obj@rtprocess(parent,mod);
-                    % a process can only be one of the following
-          obj.is_measurement=1;
+            % a process can only be one of the following
+            obj.is_measurement=1;
         end
         
         function obj=initialize(obj)
@@ -32,8 +32,7 @@ classdef rtprocess_measurement < rtprocess
         end
         
         function obj=process(obj)
-           
-                obj.parent.measurement_result{obj.parent.frame_counter}=calculate(obj.modules,obj.parent.current_stim);
-                   end
+            obj.parent.measurement_result{obj.parent.frame_counter}=calculate(obj.modules,obj.parent.current_stim);
+        end
     end
 end

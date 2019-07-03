@@ -41,7 +41,7 @@ classdef rt_input_file < rt_input
                 error('rt_input_file: file: %s doesn''t exist in folder %s\n',filename,pwd);
             end
             
-            ai=audioinfo(obj.filename);
+            ai=audioinfo(filename);
             obj.file_length=ai.Duration;
             obj.fileFs=ai.SampleRate;
             obj.file_frame_length=calc_frame_length(obj,obj.fileFs,obj.parent.SampleRate,obj.parent.FrameLength);
@@ -58,7 +58,7 @@ classdef rt_input_file < rt_input
         function sig=read_next(obj)
             sig = obj.recorder();
             sig=resample(sig,obj.parent.SampleRate,obj.fileFs); % ressample to wanted SR
-            sig=calibrate(obj,sig);
+            sig=calibrate_in(obj,sig);
         end
              
         function close(obj)

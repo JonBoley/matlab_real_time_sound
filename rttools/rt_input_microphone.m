@@ -23,9 +23,9 @@ classdef rt_input_microphone < rt_input
             pre_init(obj);  % add the parameter gui
             add(obj.p,param_checkbox('Calibrate',pars.Results.Calibrate));
             add(obj.p,param_generic('system_input_type',pars.Results.system_input_type));
-%             add(obj.p,param_generic('Gains',pars.Results.Gains));
-                        add(obj.p,param_filename('CalibrationFile',pars.Results.CalibrationFile));
-
+            %             add(obj.p,param_generic('Gains',pars.Results.Gains));
+            add(obj.p,param_filename('CalibrationFile',pars.Results.CalibrationFile));
+            
             obj.input_source_type='mic'; % I am a microphone
             
         end
@@ -45,19 +45,22 @@ classdef rt_input_microphone < rt_input
             
             cal=getvalue(obj.p,'Calibrate');
             if cal
-                      % load calibration file
+                % load calibration file
                 cf=getvalue(obj.p,'CalibrationFile');
                 run(cf); % this loads a structure called 'calib'
                 gains=calib.gains;
                 bw=calib.bandwidth;
-%        
+                %
                 obj.my_in_equalizer = graphicEQ('SampleRate',obj.parent.SampleRate,...
                     'EQOrder',2,...
                     'Structure','Cascade',...
                     'Bandwidth',bw,...
                     'Gains',gains);
             end
-             set_changed_status(obj.p,0);
+            set_changed_status(obj.p,0);
+            for i=1:10
+                [~] = obj.parent.recorder(); % silly trick to avoid a pause at the beginning: record one frame. That means the first actual recorded frame will be smooth!
+            end
         end
         
         function sig=read_next(obj)
@@ -65,7 +68,8 @@ classdef rt_input_microphone < rt_input
                 post_init(obj);
                 set_changed_status(obj.p,0);
             end
-            sig = obj.parent.recorder();
+            [sig,dropout] = obj.parent.recorder();
+            obj.parent.last_dropout=obj.parent.last_dropout+dropout;
             obj.parent.last_recorded_stim=sig;
             
             cal=getvalue(obj.p,'Calibrate');
@@ -76,16 +80,16 @@ classdef rt_input_microphone < rt_input
             sig=sig.*fac;
         end
         
-                % calibration function
+        % calibration function
         function sig=calibrate_in(obj,sig)
-            sig=obj.my_in_equalizer(sig);            
+            sig=obj.my_in_equalizer(sig);
         end
         
         function close(obj)
             if ~isempty(obj.parent.recorder)
                 release(obj.parent.recorder);
             end
-            if ~isempty(obj.my_in_equalizer)                
+            if ~isempty(obj.my_in_equalizer)
                 release(obj.my_in_equalizer);
             end
         end

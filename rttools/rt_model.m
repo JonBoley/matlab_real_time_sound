@@ -21,7 +21,7 @@ classdef rt_model < handle   % derived from handle, so that every instance is ju
         last_played_stim; % I need this purely for the measurement of latency: store the stimulus that is last played
         last_recorded_stim; % I need this purely for the measurement of latency: store the stimulus that is last played
                 clean_stim;   % when cleaning ideally, sometimes we need the clean signal stored from before adding noise
-
+last_dropout=0;
         processes=[]; % all the information about processes
         player; % each model can only have one open SoundSource and drain. Therefore make sure it's central!
         recorder;

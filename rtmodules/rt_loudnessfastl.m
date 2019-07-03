@@ -28,6 +28,7 @@ classdef rt_loudnessfastl < rt_measurer
             s='Loudness (Fastl) estimates the perceived Loudness of a sound';
             s=[s,'using the implementaiton from Hugo Fastl available here'];
             s=[s,'https://www.salford.ac.uk/research/sirc/research-groups/acoustics/psychoacoustics/sound-quality-making-products-sound-better/accordion/sound-quality-testing/matlab-codes'];
+            s=[s,'described in ISO BS 532/R and DIN 45631'];
             obj.descriptor=s;
             
         end
