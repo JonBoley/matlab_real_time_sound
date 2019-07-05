@@ -32,8 +32,8 @@ classdef rt_input_output < rt_output & rt_input
             addParameter(pars,'OutGains','0,0,0,0,0,0,0,0,0,0');
             
             parse(pars,varargin{:});
-            add(obj.p,param_popupmenu('Calibrate',pars.Results.Calibrate));
-            add(obj.p,param_checkbox('Direction',pars.Results.Direction,'list',choices));
+            add(obj.p,param_checkbox('Calibrate',pars.Results.Calibrate));
+            add(obj.p,param_popupmenu('Direction',pars.Results.Direction,'list',choices));
             add(obj.p,param_generic('InGains',pars.Results.InGains));
             add(obj.p,param_generic('OutGains',pars.Results.OutGains));
             

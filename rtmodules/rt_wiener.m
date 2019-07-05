@@ -44,8 +44,8 @@ classdef rt_wiener < rt_manipulator
             addParameter(pars,'a_dd',0.98);
             addParameter(pars,'q',0.5);
             parse(pars,varargin{:});
-            add(obj.p,param_float_slider('smoothing factor in apriori',pars.Results.a_dd,'minvalue',0, 'maxvalue',1));
-            add(obj.p,param_float_slider('a priori speech probability',pars.Results.q,'minvalue',0, 'maxvalue',1));
+            add(obj.p,param_float_slider('smoothing_factor_in_apriori',pars.Results.a_dd,'minvalue',0, 'maxvalue',1));
+            add(obj.p,param_float_slider('a_priori_speech_probability',pars.Results.q,'minvalue',0, 'maxvalue',1));
             
             obj.requires_overlap_add=1; % this module only runs properly with overlap add switched on
             
@@ -74,7 +74,7 @@ classdef rt_wiener < rt_manipulator
             post_init@rt_manipulator(obj);
             
             %             mu=getvalue(obj.p,'smoothing factor in noise'); % smoothing factor in noise spectrum update
-            a_dd=getvalue(obj.p,'smoothing factor in apriori');  % smoothing factor in priori update
+            a_dd=getvalue(obj.p,'smoothing_factor_in_apriori');  % smoothing factor in priori update
             %             eta=getvalue(obj.p,'VAD threshold'); % VAD threshold
             
             fs=obj.parent.SampleRate;
@@ -116,7 +116,7 @@ classdef rt_wiener < rt_manipulator
             obj.PH1mean  = 0.5;
             obj.alphaPH1mean = 0.9;
             obj.alphaPSD = 0.8;
-            q=getvalue(obj.p,'a priori speech probability');
+            q=getvalue(obj.p,'a_priori_speech_probability');
             
             obj.priorFact  = q./(1-q);
             obj.xiOptDb    = 15; % optimal fixed a priori SNR for SPP estimation
@@ -133,7 +133,7 @@ classdef rt_wiener < rt_manipulator
         
         function enhanced=apply(obj,noisy)
             
-            a_dd=getvalue(obj.p,'smoothing factor in apriori');  % smoothing factor in priori update
+            a_dd=getvalue(obj.p,'smoothing_factor_in_apriori');  % smoothing factor in priori update
             
             L=length(noisy);
             noisy= noisy.* obj.hamming_win;

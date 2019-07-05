@@ -45,8 +45,12 @@ addpath(genpath('../rtmodules'));
 
 mymodel=rt_model('SampleRate',sr,'FrameLength',frame_length,'Channels',1,'Duration',1,'OverlapAdd',0);
 % module_1=rt_input_oscillator(mymodel,'SignalType','sine','Frequency',1000,'Amplitude',80);
-module_1=rt_input_oscillator(mymodel,'SignalType','noise','NoiseColor','white','Amplitude',50);
-add_module(mymodel,module_1);
+% module_1=rt_input_oscillator(mymodel,'SignalType','noise','NoiseColor','white','Amplitude',50);
+% add_module(mymodel,module_1);
+
+module_1b=rt_amplify(mymodel);
+add_module(mymodel,module_1b);
+
 
 module_2=rt_output_speaker(mymodel,'Calibrate',0,'system_output_type',system_output_type,'CalibrationFile','AKG_K271_MkII_1_3_octave.m');
 % choices={'first record then play';'first play then record'};

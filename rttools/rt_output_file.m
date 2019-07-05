@@ -7,7 +7,6 @@ classdef rt_output_file < rt_output
         filewriter;
     end
     
-%   Copyright 2019 Stefan Bleeck, University of Southampton
     methods
         function obj=rt_output_file(parent,varargin) %% called the very first time around
             obj@rt_output(parent,varargin{:});

@@ -96,12 +96,9 @@ classdef rt_bmm < rt_visualizer
             
             set(ax,'xticklabel',obj.xlab)
             set(ax,'yticklabel',obj.ylab)
-            
-            
         end
         
         function plot(obj,sig)
-            
             if has_changed(obj.p)
                 p1=getparameter(obj.p,'numberChannels');
                 p2=getparameter(obj.p,'lowest_frequency');

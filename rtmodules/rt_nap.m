@@ -28,7 +28,7 @@ classdef rt_nap < rt_visualizer
             add(obj.p,param_number('numberChannels',pars.Results.numberChannels));
             add(obj.p,param_number('lowest_frequency',pars.Results.lowest_frequency));
             add(obj.p,param_number('highest_frequency',pars.Results.highest_frequency));
-            add(obj.p,param_float_slider('zoom ',pars.Results.zoom,'minvalue',1,'maxvalue',100,'scale','log'));
+            add(obj.p,param_float_slider('zoom',pars.Results.zoom,'minvalue',1,'maxvalue',100,'scale','log'));
             
             s='neural activity pattern represents graphically the activity in the auditory brainstem';
             s=[s,'accoding to the auditory image model'];
@@ -111,7 +111,7 @@ classdef rt_nap < rt_visualizer
             push(obj.nap_buffer,nap');
             vals=get(obj.nap_buffer)'; % vals come with values between 0 and 1
             vals=vals.*128;
-            z=getvalue(obj.p,'zoom ');
+            z=getvalue(obj.p,'zoom');
             vals=vals.*z;
             image(vals,'parent',ax);
 %    max(max(vals))

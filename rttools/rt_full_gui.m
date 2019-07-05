@@ -520,7 +520,7 @@ classdef rt_full_gui <handle%#Lklklk11
         
         function save_script_file(obj,fname)
             % save a minimum script that can run standalone (and easily expanded)
-            od=cd('scripts');
+            od=cd(fullfile(obj.mymodel.rootfolder,'scripts'));
             if nargin<2
                 fname='script_last_saved';
                 fname=get_new_filename(fname,'m');

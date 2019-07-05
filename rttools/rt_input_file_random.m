@@ -30,7 +30,6 @@ classdef rt_input_file_random < rt_input
             parse(pars,varargin{:});
             add(obj.p,param_foldername('foldername',pars.Results.foldername));
             add(obj.p,param_number('MaxFileLeveldB',pars.Results.MaxFileLeveldB));
-            
         end
         
         function post_init(obj) % called the second times around
@@ -91,7 +90,6 @@ classdef rt_input_file_random < rt_input
             fac=power(10,(calib+obj.parent.input_gain)/20);
             sig=sig.*fac;
         end
-        
         
     end
 end

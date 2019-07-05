@@ -12,19 +12,16 @@ classdef rt_lpc < rt_measurer
             obj.fullname='Linear Predictive Coefficients (LPC)'; % full name identifies it later on the screen
             pre_init(obj);  % add the parameter gui
                   
-            
             s='Linear Predictive Coefficients (LPC) ';
             s=[s,'implemenation from Hideki Kawahara from github: https://github.com/HidekiKawahara'];
             s=[s,'more information here: https://en.wikipedia.org/wiki/Linear_predictive_coding'];
             s=[s,''];
             s=[s,'matlab uses the function https://uk.mathworks.com/help/signal/ref/lpc.html'];
             obj.descriptor=s;   
-            
         end
         
         function obj=post_init(obj)
             post_init@rt_measurer(obj);
-
 %             figure(1);
             myGUIdata.samplingFrequency = 8000; % in Hz
             myGUIdata.windowLength = obj.parent.FrameLength/obj.parent.SampleRate; % in second

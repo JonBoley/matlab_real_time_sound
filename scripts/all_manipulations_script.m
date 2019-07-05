@@ -1,5 +1,9 @@
 
-% script to run a simple hearing aid with real time controls
+% script to measure speech intellegibility
+% load a speech wav file
+% specify the noise and SNR
+% measure intellegibility
+
 clear all
 clc
 close all force
@@ -16,8 +20,8 @@ module_1=rt_input_file(mymodel,'filename',filename);
 add_module(mymodel,module_1);
 module_2=rt_annoyance(mymodel,'integrationPeriod',0.4);
 add_module(mymodel,module_2);
-% module_2=rt_sai(mymodel,'integrationPeriod',0.4);
-% add_module(mymodel,module_2);
+module_2=rt_sai(mymodel,'integrationPeriod',0.4);
+add_module(mymodel,module_2);
 
 gui(mymodel);
 initialize(mymodel);

@@ -18,7 +18,7 @@ classdef rt_module < handle & matlab.mixin.Copyable
         is_output=0;
         guihandle; % if we have a gui, then this is the handle
         
-%         show=1; % make this module visible on screen to select
+        %         show=1; % make this module visible on screen to select
         label='';  % like left channel, right channel
         partner=[]; % some modules depend on each other. that can be labelled here (channlels or overlap and add)
         descriptor='no description yet';
@@ -105,7 +105,11 @@ classdef rt_module < handle & matlab.mixin.Copyable
                 end
             end
             
-            ss=sprintf('%s(mymodel,%s)',modname,valstr);
+            if isempty(valstr)
+                ss=sprintf('%s(mymodel)',modname);
+            else
+                ss=sprintf('%s(mymodel,%s)',modname,valstr);
+            end
         end
         
         
