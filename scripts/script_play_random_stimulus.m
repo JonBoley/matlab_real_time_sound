@@ -11,7 +11,7 @@ module_1=rt_input_file_random(mymodel,'foldername','../randomwavs','MaxFileLevel
 add_module(mymodel,module_1);
 % module_2=rt_waveform(mymodel,'zoom',1.000000);
 % add_module(mymodel,module_2);
-module_3=rt_output_speaker(mymodel,'Calibrate',1,'system_output_type','Default','CalibrationFile','AKG_K271_MkII_1_3_octave.m');
+module_3=rt_output_speaker(mymodel,'Calibrate',0,'system_output_type','Default','CalibrationFile','AKG_K271_MkII_1_3_octave.m');
 add_module(mymodel,module_3);
 
 gui(mymodel);
