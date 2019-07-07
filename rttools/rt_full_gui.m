@@ -2,7 +2,7 @@
 %   Author: Stefan Bleeck (bleeck@gmail.com)
 
 
-classdef rt_full_gui <handle%#Lklklk11
+classdef rt_full_gui <handle%#Lklklk
     properties
         
         all_manipulations=[];  % bag to store links to the maniplations in one place (it's easier)

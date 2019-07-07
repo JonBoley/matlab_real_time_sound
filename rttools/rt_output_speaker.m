@@ -20,8 +20,8 @@ classdef rt_output_speaker < rt_output
             parse(pars,varargin{:});
             obj.fullname=sprintf('speaker output: %s',pars.Results.system_output_type);
             pre_init(obj);  % add the parameter gui
-            add(obj.p,param_checkbox('Calibrate',pars.Results.Calibrate));
             add(obj.p,param_generic('system_output_type',pars.Results.system_output_type));
+            add(obj.p,param_checkbox('Calibrate',pars.Results.Calibrate));
             add(obj.p,param_filename('CalibrationFile',pars.Results.CalibrationFile));
             
             obj.output_drain_type='speaker'; % I am a speaker (or headphone)
