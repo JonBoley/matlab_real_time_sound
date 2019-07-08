@@ -97,7 +97,8 @@ function res = fastAnnoyance(x,Fs,print)
     end
     F = sum(LDb)/40; % calibration factor to match
     % correct for SPL 
-    SPLDiff= SPL(x) - 60;
+    splx=20*log10(rms(x)/2E-5);
+    SPLDiff= splx - 60;
     F = F * 2.^-(SPLDiff/20);
     F = F-0.4; %correct offset
     F = max(0,F); % limiting

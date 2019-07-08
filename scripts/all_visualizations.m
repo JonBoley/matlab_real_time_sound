@@ -45,7 +45,7 @@ mymodel=rt_model('SampleRate',sr,'FrameLength',frame_length,'Channels',1,'Durati
 add_module(mymodel,rt_input_file_random(mymodel,'foldername','../randomwavs','MaxFileLeveldB',100.000000));
 
 
-for i=[5]
+for i=1
     eval(os{i});
     disp(os{i});
 end
@@ -55,14 +55,14 @@ initialize(mymodel);
 run(mymodel);
 
 return
-
-add_module(mymodel,rt_bmm(mymodel,'numberChannels',50.000000,'lowest_frequency',100.000000,'highest_frequency',6000.000000,'autoscale',0,'zoom',1.000000));
-add_module(mymodel,rt_nap(mymodel,'numberChannels',50.000000,'lowest_frequency',100.000000,'highest_frequency',6000.000000,'zoom',1.000000));
-add_module(mymodel,rt_sai(mymodel,'numberChannels',50.000000,'lowest_frequency',100.000000,'highest_frequency',6000.000000,'zoom',1.000000));
-add_module(mymodel,rt_spectrum(mymodel,'WindowLength',30.000000,'Overlap',20.000000,'NumberFFTbins','256','WindowFunction','blackmanharris','zoom',1.000000));
-add_module(mymodel,rt_spectrum_lpc(mymodel,'WindowLength',30.000000,'Overlap',20.000000,'NumberFFTbins','256','WindowFunction','blackmanharris','zoom',1.000000));
-add_module(mymodel,rt_strobes(mymodel,'numberChannels',50.000000,'lowest_frequency',100.000000,'highest_frequency',6000.000000,'zoom',1.000000));
-add_module(mymodel,rt_vad(mymodel,'zoom',1.000000,'FFTLength',256.000000,'Window','Hann','SidelobeAttenuation',60.000000,'SilenceToSpeechProbability',0.200000,'SpeechToSilenceProbability',0.100000));
-add_module(mymodel,rt_vtl(mymodel));
-add_module(mymodel,rt_waveform(mymodel,'zoom',1.000000));
+% 
+% add_module(mymodel,rt_bmm(mymodel,'numberChannels',50.000000,'lowest_frequency',100.000000,'highest_frequency',6000.000000,'autoscale',0,'zoom',1.000000));
+% add_module(mymodel,rt_nap(mymodel,'numberChannels',50.000000,'lowest_frequency',100.000000,'highest_frequency',6000.000000,'zoom',1.000000));
+% add_module(mymodel,rt_sai(mymodel,'numberChannels',50.000000,'lowest_frequency',100.000000,'highest_frequency',6000.000000,'zoom',1.000000));
+% add_module(mymodel,rt_spectrum(mymodel,'WindowLength',30.000000,'Overlap',20.000000,'NumberFFTbins','256','WindowFunction','blackmanharris','zoom',1.000000));
+% add_module(mymodel,rt_spectrum_lpc(mymodel,'WindowLength',30.000000,'Overlap',20.000000,'NumberFFTbins','256','WindowFunction','blackmanharris','zoom',1.000000));
+% add_module(mymodel,rt_strobes(mymodel,'numberChannels',50.000000,'lowest_frequency',100.000000,'highest_frequency',6000.000000,'zoom',1.000000));
+% add_module(mymodel,rt_vad(mymodel,'zoom',1.000000,'FFTLength',256.000000,'Window','Hann','SidelobeAttenuation',60.000000,'SilenceToSpeechProbability',0.200000,'SpeechToSilenceProbability',0.100000));
+% add_module(mymodel,rt_vtl(mymodel));
+% add_module(mymodel,rt_waveform(mymodel,'zoom',1.000000));
 

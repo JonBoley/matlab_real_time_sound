@@ -165,6 +165,9 @@ classdef caim_sai
                         if (ii - active_strobes.time(1)) > obj.max_strobe_delay_idx
                             % delete the first strobe
                             nr=active_strobes.nr+1;
+                            if nr>obj.max_concurrent_strobes
+                                nr=obj.max_concurrent_strobes;
+                            end
                             active_strobes.weight(1:nr-1)=active_strobes.weight(2:nr);
                             active_strobes.time(1:nr-1)=active_strobes.time(2:nr);
                             active_strobes.wweight(1:nr-1)=active_strobes.wweight(2:nr);

@@ -53,7 +53,7 @@ classdef caim_strobes
                 obj.parab_a_(ch) = 4*(1-obj.height_)/(obj.parab_wnull_(ch) * obj.parab_wnull_(ch));
                 obj.parab_b_(ch) = -obj.parab_wnull_(ch) / 2;
             end
-            obj.debug=1; % show me some info!
+            obj.debug=0; % show me some info!
             if obj.debug
                 obj.threshsave=zeros(256,1);
             end
@@ -69,7 +69,7 @@ classdef caim_strobes
             sr=obj.parent.sample_rate;
             
             for ch = 1:obj.parent.num_channels
-                cur_thresh=obj.threshold_(ch);  % curren tthreshold
+                cur_thresh=obj.threshold_(ch);  % curren threshold
                 curr_sample = inp(ch,1);
                 next_sample = inp(ch,2);
                 strc=obj.strobe_count_(ch);
@@ -143,11 +143,14 @@ classdef caim_strobes
                 end
                 
                 obj.strobe_count_(ch)=strc;
-                if ~isinf(cur_thresh)
-                    obj.threshold_(ch)=cur_thresh;
-                else
-                    obj.threshold_(ch)=0;
+                if isinf(cur_thresh)
+                    disp('warning: caim_strobes has an infinite threshold, why!?');
                 end
+%                 if ~isinf(cur_thresh)
+%                     obj.threshold_(ch)=cur_thresh;
+%                 else
+%                     obj.threshold_(ch)=0;
+%                 end
                 obj.last_lthresh_(ch)=thresh_last_strobe;
                 obj.parab_var_samples_(ch)=pvs;
                 obj.samples_since_last_strobe_(ch)=samples_sincec_last;
