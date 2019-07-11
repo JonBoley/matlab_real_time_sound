@@ -1,5 +1,6 @@
 
 % main script: create all codebooks from folders with speech files
+% basic version: learn from 10 test speakers with 10 files each
  % clear all
  % clc
  % close all force
@@ -8,16 +9,15 @@ addpath(genpath('../../rttools'));
 addpath(genpath('../../rtmodules'));
 addpath(genpath('../../thirdparty'));
 
-
 nr_cluster_means=16;        % k-means clustering: how many centroids?
 
 
-subjects=2:10; % these are the subject numbers
+subjects=30:39; % these are the subject numbers
 nr_learn=10; % how many wavs I use for learning
 
-
+tic
 % create a list of files that I want to learn
-ood=cd('/Users/bleeck/Google Drive/HA lab/sounds/lombard grid audio');
+ood=cd('./training');
 fullfiles=[];
 for i=1:length(subjects)
     snr=subjects(i);
@@ -56,23 +56,9 @@ for i=1:length(subjects)
 end
 
 save fullcodebooks fullcodebooks
-
+toc
 
 return
-% 
-% 
-% load dict dict
-% 
-% 
-% fullcodebooks=[];
-% nr_cluster_means=16;
-% 
-% for i=1:length(dict)-1
-%     i
-%   cb=build_codebook(dict{i},nr_cluster_means);  % build the codebook for this subject
-%     fullcodebooks{i}=cb;
-% end
-
 
 
 
