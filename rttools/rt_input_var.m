@@ -32,7 +32,7 @@ classdef rt_input_var < rt_input
             var=getvalue(obj.p,'variable');
             
             c1=obj.counter;
-            c2=c1+obj.parent.frame_length-1;
+            c2=c1+obj.parent.FrameLength-1;
             if c2>length(var)
                 var=[var;zeros(c2-length(var),1)];
             end
